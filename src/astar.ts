@@ -48,10 +48,15 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
     }
 
     while ((cur = list.shift()) != null) {
-        // cost == 0 we found it
         if (cur.estCost == 0) {
+            // cost == 0 we found it
             found = true;
             continue;
+        }
+        if(cur.estCost > attemptLimt){
+            // our best option is too far away, give up
+            //return null;
+            // TODO this doesn't work
         }
 
         // neighbours

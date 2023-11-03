@@ -1,15 +1,19 @@
 import { Arr } from "./arr";
 import { solve } from "./astar";
+import { maze } from "./maze";
 
 console.log("Maze");
 
-const arr = new Arr<string>(19, 19, ".");
+const arr = new Arr<string>(39, 39, ".");
 arr.init((x, y) =>
-    (x % 2 == 1 && y % 2 == 1) || Math.random() > 0.3 ? "#" : "."
+    (x % 2 == 1 && y % 2 == 1) ? "#" : "."
 );
+
+maze(arr, ".","#", 14);
 
 const path = solve(arr,v=>v==".",[1,3],[15,13],"?");
 console.log(path)
+
 
 console.log("Done")
 
