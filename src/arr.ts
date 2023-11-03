@@ -5,6 +5,9 @@ export class Arr<T>{
             this.data.push(defaultVal);
         }
     }
+    public inBounds(x: number, y: number): boolean {
+        return !(x < 0 || x >= this.width || y < 0 || y >= this.height);
+    }
 
     public getSafe(x: number, y: number, defaultVal: T): T {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
@@ -12,6 +15,7 @@ export class Arr<T>{
         }
         return this.data[this.idx(x, y)];
     }
+
     public setSafe(x: number, y: number, val: T) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
             return;
