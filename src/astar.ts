@@ -9,7 +9,7 @@ type Option = {
     parent?: [number, number]
 }
 
-export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number, number], [tx, ty]: [number, number], placeholder: T, attemptLimt: number = 999999): Path | null {
+export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number, number], [tx, ty]: [number, number], placeholder: T, attemptLimit: number = 999999): Path | null {
     // todo we could scan the options Arr for the lowest maybe
     let list: Option[] = [{
         xy: [sx, sy],
@@ -47,16 +47,14 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
         }
     }
 
-    while ((cur = list.shift()) != null) {
-        if (cur.estCost == 0) {
+    while (!found && (cur = list.shift()) != null) {
+        if (cur.xy[0] == tx && cur.xy[1] == ty) {
             // cost == 0 we found it
             found = true;
-            continue;
         }
-        if(cur.estCost > attemptLimt){
+        if (cur.dist + cur.estCost > attemptLimit * attemptLimit * 0.5) {
             // our best option is too far away, give up
-            //return null;
-            // TODO this doesn't work
+            return null;
         }
 
         // neighbours
@@ -66,7 +64,7 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
         evaluate(cur.xy[0], cur.xy[1] + 1, cur.xy, cur.dist);
 
         // generally almost-sorted
-        list.sort((a, b) => a.estCost - b.estCost);
+        list.sort((a, b) => (a.dist + a.estCost) - (b.dist + b.estCost));
     }
 
 
@@ -88,6 +86,5 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
 
 
 function calcCostEst([sx, sy]: [number, number], [tx, ty]: [number, number]): number {
-    // since its a square grid and there's no diagonals
-    return Math.abs(sx - tx) + Math.abs(sy - ty);
+    return (sx - tx) * (sx - tx) + (sy - ty) * (sy - ty);
 }

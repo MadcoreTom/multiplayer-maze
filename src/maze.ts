@@ -11,7 +11,7 @@ type Option = {
     centre: [number, number]
 }
 
-export function maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) {
+export function* maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) :Iterator<void,void>{
     const options: Option[] = [];
 
     // add options
@@ -46,11 +46,12 @@ export function maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) {
     }
 
     // work through the list
-    options.forEach(opt => {
+    for (let opt of options) {
         const path = solve(arr, a => a == solid, opt.a, opt.b, solid, limit);
         const join = path == null || path.length > limit;
         if (join) {
             arr.setSafe(opt.centre[0], opt.centre[1], open);
         }
-    });
+        yield;
+    }
 }
