@@ -9,7 +9,7 @@ type Option = {
     parent?: [number, number]
 }
 
-export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number, number], [tx, ty]: [number, number], placeholder: T, attemptLimit: number = 999999): Path | null {
+export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number, number], [tx, ty]: [number, number], placeholder: T, attemptLimit: number = 999999): Path | undefined {
     // todo we could scan the options Arr for the lowest maybe
     const wh :[number,number]= [arr.width, arr.height]
     let list: Option[] = [{
@@ -55,7 +55,7 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
         }
         if (cur.dist + cur.estCost > attemptLimit * attemptLimit * 0.5) {
             // our best option is too far away, give up
-            return null;
+            return;
         }
 
         // neighbours
@@ -81,7 +81,7 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
         }
         return path;
     }
-    return null;
+    return;
 }
 
 

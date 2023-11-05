@@ -11,7 +11,7 @@ type Option = {
     centre: [number, number]
 }
 
-export function* maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) :Iterator<void,void>{
+export function* maze<T>(arr: Arr<T>, solid: T, open: T, limit: number): Iterator<void, void> {
     const options: Option[] = [];
 
     // add options
@@ -38,8 +38,8 @@ export function* maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) :Iterator
     });
 
     // shuffle
-    for (let i = 0; i < options.length-1; i++) {
-        const r = options.length - Math.floor(Math.random() * (options.length - 1))-1;
+    for (let i = 0; i < options.length - 1; i++) {
+        const r = options.length - Math.floor(Math.random() * (options.length - 1)) - 1;
         const tmp = options[i];
         options[i] = options[r];
         options[r] = tmp;

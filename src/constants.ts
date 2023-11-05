@@ -1,0 +1,1 @@
+export const MAZE_SIZE = 40;
