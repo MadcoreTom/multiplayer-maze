@@ -4,7 +4,7 @@ When generating a normal maze, I initialise the grid, set the grid tiles where `
 
 This result in a maze, with a single path from A to B.
 
-But what if I wanted multiple paths? What if I wanted to join any areas if the path exceeded some sort of threshold.
+> But what if I wanted multiple paths? What if I wanted to join any areas if the path exceeded some sort of threshold.
 
 In this post, I develop and explore this idea, and see if any interesting patterns emerge
 
@@ -20,6 +20,8 @@ arr.init((x, y) =>
 );
 ```
 I chose to strings to represent the tiles. I got '#' and '.' mixed up pretty early on, so '.' are walls. It doesn't really matter though.
+
+![A intialised grid of tiles](grid.png)
 
 To render the maze, I'm using a canvas and 2D rendering context
 ```ts
@@ -78,6 +80,8 @@ Making the maze can be broken into 3 parts
 Create an array of every tile that bridges any two white tiles, basically `x%2==1 && y%2==0` for horizontal joins, and `x%2==0 && y%2==1` for vertical.
 I stored the tiles tothe north & south or east & west in this object too to make life eaiser later on.
 
+![Identifying the tiles that join white tiles](joining.png)
+
 ### 2. Shuffle
 
 Here's how I shuffle
@@ -93,3 +97,21 @@ I might use a seeded random number generator at some point so I can have maze se
 
 ### 3. Walk through the list
 For each of the options I use the pathfinding algorithm to determine how far apart they are (if they're connected at all). If they aren't connected, or are farther than the threshold, then I "join" the areas by setting the tile to white.
+
+## The Result
+
+You can see here that there are mutliple solutions to the maze, adn there isn't anywhere within the maze where you would need to backtack too much. This maze shows a flaw in the "good enough" pathfinding algorithm.
+
+![A small maze](maze.png)
+
+We can create a bigger maze:
+
+![A bigger maze](bigger-maze.png)
+
+And we can increase the threshold, to make it harder to get around:
+
+![A bigger maze](bigger-maze-higher.png)
+
+Or decrease it to make it easier:
+
+![A bigger maze](bigger-maze-lower.png)

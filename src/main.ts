@@ -2,9 +2,9 @@ import { Arr } from "./arr";
 import { Path, solve } from "./astar";
 import { maze } from "./maze";
 
-const STEPS_PER_FRAME = 40;
-const MAX_DISTANCE = 28;
-const MAZE_SIZE = 59;
+const STEPS_PER_FRAME = 10;
+const MAX_DISTANCE = 7;
+const MAZE_SIZE = 29;
 const SCALE = Math.floor(1000 / MAZE_SIZE);
 
 const arr = new Arr<string>(MAZE_SIZE, MAZE_SIZE, ".");
