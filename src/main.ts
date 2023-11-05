@@ -1,4 +1,5 @@
 import { MAZE_SIZE } from "./constants";
+import { registerKeyboard } from "./controls";
 import { render } from "./render";
 import { initState } from "./state";
 import { update } from "./update";
@@ -10,6 +11,7 @@ state.maze.init((x, y) =>
 
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+registerKeyboard();
 
 let lastTime = 0;
 const MAX_FRAME_TIME = 1000 / 10;
