@@ -1,1 +1,1 @@
-export const MAZE_SIZE = 40;
+export const MAZE_SIZE = 20;

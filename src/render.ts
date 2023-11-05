@@ -3,15 +3,22 @@ import { State } from "./state";
 
 const SCALE = Math.floor(1000 / MAZE_SIZE);
 
+const COLOUR_MAP = {
+    ".": "black",
+    "#": "white",
+    "?": "red",
+    "%": "#FFC6B1"
+}
+
 export function render(ctx: CanvasRenderingContext2D, state: State) {
     const { maze, offset, path } = state;
     ctx.fillStyle = "grey";
     ctx.fillRect(0, 0, 1000, 1000);
     maze.forEach((x, y, v) => {
-        ctx.fillStyle = v == "#" ? "white" : "black";
+        ctx.fillStyle =COLOUR_MAP[v];
         x = (x + maze.width - offset[0]) % maze.width;
         y = (y + maze.height - offset[1]) % maze.height;
-        ctx.fillRect(Math.floor(x * SCALE), Math.floor(y * SCALE), SCALE, SCALE);
+        ctx.fillRect(Math.round(x * SCALE), Math.round(y * SCALE), SCALE, SCALE);
     });
 
     if (path) {
@@ -32,6 +39,6 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(500, 500, SCALE * 10, 0, 2 * Math.PI);
+    ctx.arc(500, 500, SCALE * 8, 0, 2 * Math.PI);
     ctx.stroke();
 }
