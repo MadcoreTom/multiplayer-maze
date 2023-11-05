@@ -11,10 +11,11 @@ type Option = {
 
 export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number, number], [tx, ty]: [number, number], placeholder: T, attemptLimit: number = 999999): Path | null {
     // todo we could scan the options Arr for the lowest maybe
+    const wh :[number,number]= [arr.width, arr.height]
     let list: Option[] = [{
         xy: [sx, sy],
         dist: 0,
-        estCost: calcCostEst([sx, sy], [tx, ty])
+        estCost: calcCostEst([sx, sy], [tx, ty], wh)
     }];
 
     const options = new Arr<Option | null>(arr.width, arr.height, null);
@@ -37,7 +38,7 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
                     const opt: Option = {
                         xy: [x, y],
                         dist: curDist + 1,
-                        estCost: calcCostEst([x, y], [tx, ty]),
+                        estCost: calcCostEst([x, y], [tx, ty], wh),
                         parent: parent
                     }
                     list.push(opt);
@@ -58,10 +59,10 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
         }
 
         // neighbours
-        evaluate(cur.xy[0] - 1, cur.xy[1], cur.xy, cur.dist);
-        evaluate(cur.xy[0] + 1, cur.xy[1], cur.xy, cur.dist);
-        evaluate(cur.xy[0], cur.xy[1] - 1, cur.xy, cur.dist);
-        evaluate(cur.xy[0], cur.xy[1] + 1, cur.xy, cur.dist);
+        evaluate((cur.xy[0] - 1 + arr.width)%arr.width, cur.xy[1], cur.xy, cur.dist);
+        evaluate((cur.xy[0] + 1)%arr.width, cur.xy[1], cur.xy, cur.dist);
+        evaluate(cur.xy[0], (cur.xy[1] - 1 + arr.height)%arr.height, cur.xy, cur.dist);
+        evaluate(cur.xy[0], (cur.xy[1] + 1)%arr.height, cur.xy, cur.dist);
 
         // generally almost-sorted
         list.sort((a, b) => (a.dist + a.estCost) - (b.dist + b.estCost));
@@ -85,6 +86,9 @@ export function solve<T>(arr: Arr<T>, isSolid: (T) => boolean, [sx, sy]: [number
 
 
 
-function calcCostEst([sx, sy]: [number, number], [tx, ty]: [number, number]): number {
-    return (sx - tx) * (sx - tx) + (sy - ty) * (sy - ty);
+function calcCostEst([sx, sy]: [number, number], [tx, ty]: [number, number], [w, h]: [number, number]): number {
+    // Wrapping euclidean distance
+    const dx = Math.abs(sx - tx) < w/2 ? (sx - tx) : w - Math.abs(sx - tx);
+    const dy = Math.abs(sy - ty) < h/2 ? (sy - ty) : h - Math.abs(sy - ty);
+    return dx * dx +dy*dy;
 }

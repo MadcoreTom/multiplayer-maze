@@ -3,8 +3,8 @@ import { Path, solve } from "./astar";
 import { maze } from "./maze";
 
 const STEPS_PER_FRAME = 10;
-const MAX_DISTANCE = 7;
-const MAZE_SIZE = 29;
+const MAX_DISTANCE = 15;
+const MAZE_SIZE = 24;
 const SCALE = Math.floor(1000 / MAZE_SIZE);
 
 const arr = new Arr<string>(MAZE_SIZE, MAZE_SIZE, ".");
@@ -44,7 +44,7 @@ function tick(time: number) {
     for (let i = 0; i < STEPS_PER_FRAME && (!result || !result.done); i++) {
         result = mazeGenerator.next();
     }
-    let path = solve(arr, v => v == ".", [1, 1], [MAZE_SIZE-2, MAZE_SIZE-2], "?");
+    let path = solve(arr, v => v == ".", [1, 1], [Math.floor(MAZE_SIZE/2)-1,Math.floor(MAZE_SIZE/2)-1], "?");
     console.log("-")
 
     render(path);

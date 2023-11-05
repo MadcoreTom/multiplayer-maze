@@ -16,21 +16,21 @@ export function* maze<T>(arr: Arr<T>, solid: T, open: T, limit:number) :Iterator
 
     // add options
     arr.forEach((x, y, cur) => {
-        const left = arr.getSafe(x - 1, y, solid);
-        const right = arr.getSafe(x + 1, y, solid);
-        const up = arr.getSafe(x, y - 1, solid);
-        const down = arr.getSafe(x, y + 1, solid);
+        const left = arr.getSafe((x - 1 + arr.width) % arr.width, y, solid);
+        const right = arr.getSafe((x + 1) % arr.width, y, solid);
+        const up = arr.getSafe(x, (y - 1 + arr.height) % arr.height, solid);
+        const down = arr.getSafe(x, (y + 1) % arr.height, solid);
         if (cur == solid) {
             if (left == open && right == open) {
                 options.push({
-                    a: [x - 1, y],
-                    b: [x + 1, y],
+                    a: [(x - 1 + arr.width) % arr.width, y],
+                    b: [(x + 1) % arr.width, y],
                     centre: [x, y]
                 });
             } else if (up == open && down == open) {
                 options.push({
-                    a: [x, y - 1],
-                    b: [x, y + 1],
+                    a: [x, (y - 1 + arr.height) % arr.height],
+                    b: [x, (y + 1) % arr.height],
                     centre: [x, y]
                 });
             }
