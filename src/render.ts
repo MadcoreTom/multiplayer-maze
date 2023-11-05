@@ -41,4 +41,12 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     ctx.beginPath();
     ctx.arc(500, 500, SCALE * 8, 0, 2 * Math.PI);
     ctx.stroke();
+    
+    // timer
+    ctx.font = "small-caps bold 40px monospace";
+    ctx.fillStyle = "black";
+    ctx.fillText("Timer: " + Math.floor(state.gameTimeRemaining/100)/10, 10,30+2);
+    ctx.fillStyle = "yellow";
+    ctx.fillText("Timer: " + Math.floor(state.gameTimeRemaining/100)/10, 10,30);
+
 }

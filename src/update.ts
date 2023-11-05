@@ -10,9 +10,12 @@ const MOVE_SPEED = 0.011;
 
 export function update(state: State) {
 
-    move(state);
+    const dir = move(state);
     state.offset[0] = state.pos[0] - MAZE_SIZE / 2;
     state.offset[1] = state.pos[1] - MAZE_SIZE / 2;
+    if(dir){
+        state.server.sendUpdate(state.pos, dir);
+    }
 
 
     // Keep generating the map
@@ -24,12 +27,12 @@ export function update(state: State) {
         result = state.mazeGenerator.next();
     }
     if (result.done) {
-        console.log(Math.floor(state.pos[0]), Math.floor(state.pos[1]))
-        state.maze.setSafe(Math.floor(state.pos[0]), Math.floor(state.pos[1]), "%");
+        // state.maze.setSafe(Math.floor(state.pos[0]), Math.floor(state.pos[1]), "%");
+        state.server.processMessages(state);
     }
 }
 
-function move(state: State) {
+function move(state: State) : XY | undefined{
     const { pos, delta } = state;
     const move: XY = [0, 0];
     if (keyDown(ControlKey.LEFT)) {
@@ -48,16 +51,20 @@ function move(state: State) {
         move[0] /= Math.SQRT2;
         move[1] /= Math.SQRT2;
     }
+    const direction = [...move] as XY;
     move[0] *= delta * MOVE_SPEED;
     move[1] *= delta * MOVE_SPEED;
 
+    let retVal: XY | undefined = undefined;
     moveAndTestCollision(state, pos, move, 0.3,
         (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.width), wrap(p[1], 0, s.maze.height), "?") == ".",
-        result => state.pos = result
+        result => { state.pos = result; retVal = direction }
     );
 
     state.pos[0] = wrap(state.pos[0], 0, state.maze.width);
     state.pos[1] = wrap(state.pos[1], 0, state.maze.height);
+
+    return retVal;
 }
 
 function wrap(val: number, low: number, high: number): number {
