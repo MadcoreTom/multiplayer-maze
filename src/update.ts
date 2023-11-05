@@ -1,4 +1,5 @@
 import { solve } from "./astar";
+import { moveAndTestCollision } from "./collision";
 import { MAZE_SIZE } from "./constants";
 import { ControlKey, keyDown } from "./controls";
 import { maze } from "./maze";
@@ -9,9 +10,10 @@ const MAX_DISTANCE = 28;
 const MOVE_SPEED = 0.021;
 
 export function update(state: State) {
-    const { offset, delta, time } = state;
 
     move(state);
+    state.offset[0] = state.pos[0] - MAZE_SIZE/2;
+    state.offset[1] = state.pos[1] - MAZE_SIZE/2;
 
     // Keep generating the map
     if (!state.mazeGenerator) {
@@ -21,11 +23,15 @@ export function update(state: State) {
     for (let i = 0; i < STEPS_PER_FRAME && (!result || !result.done); i++) {
         result = state.mazeGenerator.next();
     }
-    state.path = solve(state.maze, v => v == ".", [1, 1], [Math.floor(MAZE_SIZE / 2 + offset[0]) - 1, Math.floor(MAZE_SIZE / 2 + offset[1]) - 1], "?");
+    // state.path = solve(state.maze,
+    //     v => v == ".", [1, 1],
+    //     [Math.floor(MAZE_SIZE / 2 + state.offset[0]) - 1, Math.floor(MAZE_SIZE / 2 + state.offset[1]) - 1],
+    //     "?"
+    // );
 }
 
 function move(state: State) {
-    const { offset, delta } = state;
+    const { pos, delta } = state;
     const move: XY = [0, 0];
     if (keyDown(ControlKey.LEFT)) {
         move[0] = -1;
@@ -39,20 +45,26 @@ function move(state: State) {
     if (keyDown(ControlKey.DOWN)) {
         move[1] = 1;
     }
-	if (move[0] != 0 && move[1] != 0) {
-		move[0] /= Math.SQRT2;
-		move[1] /= Math.SQRT2;
-	}
-	move[0] *= delta * MOVE_SPEED;
-	move[1] *= delta * MOVE_SPEED;
+    if (move[0] != 0 && move[1] != 0) {
+        move[0] /= Math.SQRT2;
+        move[1] /= Math.SQRT2;
+    }
+    move[0] *= delta * MOVE_SPEED;
+    move[1] *= delta * MOVE_SPEED;
 
-	offset[0] += move[0];
-	offset[1] += move[1];
-    offset[0] = clamp(offset[0], 0, state.maze.width);
-    offset[1] = clamp(offset[1], 0, state.maze.height);
+    // pos[0] += move[0];
+    // pos[1] += move[1];
+
+    moveAndTestCollision(state, pos, move, 0.3,
+        (s, p) => s.maze.getSafe(wrap(p[0],0,s.maze.width),wrap( p[1],0,s.maze.height), "?") == ".",
+        result => state.pos = result
+    );
+
+    pos[0] = wrap(pos[0], 0, state.maze.width);
+    pos[1] = wrap(pos[1], 0, state.maze.height);
 }
 
-function clamp(val: number, low: number, high: number): number {
+function wrap(val: number, low: number, high: number): number {
     if (val < low) {
         return (val + high - low) % (high - low);
     } else if (val >= high) {
