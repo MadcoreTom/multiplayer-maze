@@ -49,4 +49,12 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     ctx.fillStyle = "yellow";
     ctx.fillText("Timer: " + Math.floor(state.gameTimeRemaining/100)/10, 10,30);
 
+    // remote players
+    ctx.strokeStyle = "blue";
+    state.remotePlayers.forEach(r=>{
+        ctx.beginPath();
+        ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
+        ctx.arc((r.lastPos[0] - state.offset[0]) * SCALE, (r.lastPos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.stroke();
+    });
 }

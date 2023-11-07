@@ -30,6 +30,18 @@ export function update(state: State) {
         // state.maze.setSafe(Math.floor(state.pos[0]), Math.floor(state.pos[1]), "%");
         state.server.processMessages(state);
     }
+
+    // set remote player state
+    state.remotePlayers.forEach(r=>{
+        const move:XY = [
+            (state.time - r.lastTime) * MOVE_SPEED * r.lastDir[0],
+            (state.time - r.lastTime) * MOVE_SPEED * r.lastDir[1]
+        ];
+        moveAndTestCollision(state, r.lastPos, move, 0.3,
+            (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.width), wrap(p[1], 0, s.maze.height), "?") == ".",
+            result =>  r.pos = result
+        );
+    })
 }
 
 function move(state: State) : XY | undefined{

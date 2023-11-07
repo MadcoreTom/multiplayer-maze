@@ -5,14 +5,17 @@ export type ClientMessage = {
     update?: { pos: XY, dir: XY },
 }
 
+export type UpdateServerMessage = {
+    changes: {
+        paint: { pos: XY, name: string }[],
+        remotes: { name: string, pos: XY, dir: XY }[]
+    }
+}
+
 export type ServerMessage = {
     newGame?: { seed: number },
-    changes?: {
-        paint?: { pos: XY, name: string }[],
-        remotes?: { name: string, pos: XY, dir: XY }[]
-    },
     timer: number
-}
+} | UpdateServerMessage
 
 export interface Network {
     sendUpdate(pos: XY, ddirection: XY): void;
