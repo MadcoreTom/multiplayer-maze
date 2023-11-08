@@ -9,6 +9,10 @@ state.maze.init((x, y) =>
     (x % 2 == 1 && y % 2 == 1) ? "#" : "."
 );
 
+const a =state.maze.serialise(v=>v,",")
+console.log("SER",a);
+state.maze.deserialise(a,v=>v,",");
+
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 registerKeyboard();

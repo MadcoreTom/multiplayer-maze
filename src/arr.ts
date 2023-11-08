@@ -1,6 +1,6 @@
 export class Arr<T>{
     private data: T[] = [];
-    public constructor(public readonly width: number, public readonly height: number, defaultVal: T) {
+    public constructor(private  width: number, private  height: number, defaultVal: T) {
         for (let i = 0; i < width * height; i++) {
             this.data.push(defaultVal);
         }
@@ -48,5 +48,35 @@ export class Arr<T>{
 
     private idx(x: number, y: number): number {
         return x * this.height + y;
+    }
+
+    public serialise(map:(arg:T)=>string, separator:string = ","):string{
+        let result = this.width + separator + this.height + separator;
+        result += this.data.map(map).join(separator);
+        return result;
+    }
+
+    public getHeight():number{
+        return this.height;
+    }
+    public getWidth():number{
+        return this.width;
+    }
+
+    public deserialise(input:string,parse:(arg:string)=>T, separator:string = ","){
+        const parts = input.split(separator);
+        const width = parseInt(parts[0]);
+        const height = parseInt(parts[1]);
+        parts.shift();
+        parts.shift();
+        const len = width*height;
+        if(parts.length == len){
+            this.width = width;
+            this.height = height;
+            this.data = parts.map(parse);
+            console.log("Done")
+        } else {
+            console.log(parts.length , "!=", len)
+        }
     }
 }

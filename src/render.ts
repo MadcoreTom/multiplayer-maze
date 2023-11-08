@@ -16,16 +16,16 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     ctx.fillRect(0, 0, 1000, 1000);
     maze.forEach((x, y, v) => {
         ctx.fillStyle =COLOUR_MAP[v];
-        x = (x + maze.width - offset[0]) % maze.width;
-        y = (y + maze.height - offset[1]) % maze.height;
+        x = (x + maze.getWidth() - offset[0]) % maze.getWidth();
+        y = (y + maze.getHeight() - offset[1]) % maze.getHeight();
         ctx.fillRect(Math.round(x * SCALE), Math.round(y * SCALE), SCALE, SCALE);
     });
 
     if (path) {
         ctx.fillStyle = "blue";
         path.forEach(([x, y]) => {
-            x = (x + maze.width - offset[0]) % maze.width;
-            y = (y + maze.height - offset[1]) % maze.height;
+            x = (x + maze.getWidth() - offset[0]) % maze.getWidth();
+            y = (y + maze.getHeight() - offset[1]) % maze.getHeight();
             ctx.fillRect(x * SCALE + SCALE / 4, y * SCALE + SCALE / 4, SCALE / 2, SCALE / 2);
         })
     }

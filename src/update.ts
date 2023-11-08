@@ -38,7 +38,7 @@ export function update(state: State) {
             (state.time - r.lastTime) * MOVE_SPEED * r.lastDir[1]
         ];
         moveAndTestCollision(state, r.lastPos, move, 0.3,
-            (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.width), wrap(p[1], 0, s.maze.height), "?") == ".",
+            (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
             result =>  r.pos = result
         );
     })
@@ -69,12 +69,12 @@ function move(state: State) : XY | undefined{
 
     let retVal: XY | undefined = undefined;
     moveAndTestCollision(state, pos, move, 0.3,
-        (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.width), wrap(p[1], 0, s.maze.height), "?") == ".",
+        (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
         result => { state.pos = result; retVal = direction }
     );
 
-    state.pos[0] = wrap(state.pos[0], 0, state.maze.width);
-    state.pos[1] = wrap(state.pos[1], 0, state.maze.height);
+    state.pos[0] = wrap(state.pos[0], 0, state.maze.getWidth());
+    state.pos[1] = wrap(state.pos[1], 0, state.maze.getHeight());
 
     return retVal;
 }

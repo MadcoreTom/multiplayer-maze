@@ -18,7 +18,7 @@ export class ClientNetwork implements Network {
         }
         this.socket.onmessage = (ev) => {
             const data = ev.data as string;
-            console.log(">", data);
+            // console.log(">", data);
             try {
                 const message = JSON.parse(data);
                 this.messages.push(message);
@@ -43,12 +43,11 @@ export class ClientNetwork implements Network {
     processMessages(state: State) {
         let message: ServerMessage | undefined;
         while ((message = this.messages.shift())) {
-            console.log("process", message);
-            if ("timer" in message) {
+            // console.log("process", message);
+
+            if (message.type == "update") {
                 state.gameTimeRemaining = parseFloat("" + message.timer);
-            }
-            if ("changes" in message && message.changes) {
-                state.remotePlayers = message.changes.remotes.map(r => {
+                state.remotePlayers = message.remotes.map(r => {
                     return {
                         lastPos: r.pos,
                         lastDir: r.dir,
@@ -56,11 +55,13 @@ export class ClientNetwork implements Network {
                         pos: [...r.pos] as XY
                     }
                 });
-                if (message.changes.paint) {
-                    message.changes.paint.forEach(p=>{
-                        state.maze.setSafe(p.pos[0],p.pos[1],"%")
-                    })
-                }
+                message.paint.forEach(p => {
+                    state.maze.setSafe(p.pos[0], p.pos[1], "%")
+                });
+            } else if(message.type == "refresh"){
+                console.log("REFRESH", message.maze);
+                state.maze.deserialise(message.maze, v=>v=="1"?'#':'.');
+                // state.maze.map((x,y,v)=>v == '%' ? "#": v)
             }
         }
     }

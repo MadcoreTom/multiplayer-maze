@@ -3,6 +3,7 @@ import { ClientMessage, ServerMessage } from "../net/net";
 import { XY } from "../state";
 import { Arr } from "../arr";
 import { MAZE_SIZE } from "../constants";
+import { gameLoop } from "./game";
 
 const TICK_RATE = 40;
 
@@ -13,19 +14,23 @@ type Client = {
     id: string,
     socket: WebSocket
 };
-type ServerState = {
+export type ServerState = {
+    mode: "play" | "scores",
     // seed:number,
     roundEndTime: number,
     // paint:Arr<string>,
     clients: Client[],
-    paintQueue:XY[],
-    paintMap:Arr<"%" | null>
+    paintQueue: XY[],
+    paintMap: Arr<"%" | null>
+    maze?:Arr<boolean>
+    mazeGenerator?: Iterator<void, void>,
 }
 
-const state: ServerState = {
+export const state: ServerState = {
+    mode: "play",
     clients: [],
-    roundEndTime :0,
-    paintQueue :[],
+    roundEndTime: 0,
+    paintQueue: [],
     paintMap: new Arr(MAZE_SIZE, MAZE_SIZE, null)
 };
 
@@ -49,7 +54,7 @@ server.on('connection', socket => {
 function onConnect(socket: WebSocket, id: string) {
     console.log("CONNECT");
     // Add to state
-    const client :Client= {
+    const client: Client = {
         id,
         dir: [0, 0],
         pos: [0, 0],
@@ -57,8 +62,6 @@ function onConnect(socket: WebSocket, id: string) {
         socket
     };
     state.clients.push(client);
-
-
 }
 
 function onMessage(socket: WebSocket, id: string, data: string) {
@@ -74,8 +77,8 @@ function onMessage(socket: WebSocket, id: string, data: string) {
             me.dir[1] = message.update.dir[1];
             const x = Math.floor(me.pos[0]);
             const y = Math.floor(me.pos[1]);
-            state.paintQueue.push([x,y]);
-            state.paintMap.setSafe(x,y,"%");
+            state.paintQueue.push([x, y]);
+            state.paintMap.setSafe(x, y, "%");
         }
     } catch (e) {
         console.warn("Malformed message, could not parse JSON");
@@ -94,44 +97,8 @@ function randomId(): string {
     return (new Number(Math.random() * 9999999)).toString(32);
 }
 
-let loopCount = 0;
 function loop() {
-
-    const timer = state.roundEndTime -  Date.now();
-    if(timer < 0){
-        state.roundEndTime = Date.now() + 20000;
-    }
-
-const paint = state.paintQueue.map(p=>{return {pos:p, name:'red'}});
-
-    state.clients.forEach(c => {
-        const message: ServerMessage = {
-            timer: timer,
-            changes: {
-                remotes: state.clients
-                    // .filter(r=>r.id !== c.id)
-                    .map(r => {
-                        return {
-                            name: "a",
-                            pos: r.pos,
-                            dir: r.dir
-                        }
-                    }),
-                paint
-            }
-        }
-        if (c.socket.readyState == c.socket.OPEN) {
-            c.socket.send(JSON.stringify(message));
-        }
-    });
-
-    if (loopCount++ % 10 == 0) {
-        console.table(state.clients.map(c => [c.id, c.pos]));
-    }
-
-    state.paintQueue = [];
-
-
+    gameLoop(state);
     setTimeout(loop, TICK_RATE);
 }
 
