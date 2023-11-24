@@ -20,8 +20,8 @@ export type ServerState = {
     roundEndTime: number,
     // paint:Arr<string>,
     clients: Client[],
-    paintQueue: XY[],
-    paintMap: Arr<"%" | null>
+    paintQueue: [number,number,string][],
+    paintMap: Arr<string | null>
     maze?:Arr<boolean>
     mazeGenerator?: Iterator<void, void>,
 }
@@ -77,8 +77,8 @@ function onMessage(socket: WebSocket, id: string, data: string) {
             me.dir[1] = message.update.dir[1];
             const x = Math.floor(me.pos[0]);
             const y = Math.floor(me.pos[1]);
-            state.paintQueue.push([x, y]);
-            state.paintMap.setSafe(x, y, "%");
+            state.paintQueue.push([x, y, id]);
+            state.paintMap.setSafe(x, y, id);
         }
     } catch (e) {
         console.warn("Malformed message, could not parse JSON");
@@ -93,8 +93,9 @@ function onClose(socket: WebSocket, id: string) {
 }
 
 // TODO replace
+let playerId = 0;
 function randomId(): string {
-    return (new Number(Math.random() * 9999999)).toString(32);
+    return (new Number(playerId++)).toString(32);
 }
 
 function loop() {

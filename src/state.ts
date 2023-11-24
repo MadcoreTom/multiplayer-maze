@@ -24,6 +24,8 @@ export type State = {
     server: Network,
     gameTimeRemaining: number,
     remotePlayers: RemotePlayer[]
+    scores: {player:string, score:number}[],
+    mode: "play"|"score",
 }
 
 export function initState(size: number): State {
@@ -35,6 +37,8 @@ export function initState(size: number): State {
         time: 0,
         server:new ClientNetwork(),
         gameTimeRemaining:0,
-        remotePlayers: []
+        remotePlayers: [],
+        mode: "play",
+        scores: []
     }
 }

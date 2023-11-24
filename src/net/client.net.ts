@@ -56,12 +56,15 @@ export class ClientNetwork implements Network {
                     }
                 });
                 message.paint.forEach(p => {
-                    state.maze.setSafe(p.pos[0], p.pos[1], "%")
+                    state.maze.setSafe(p.pos[0], p.pos[1], p.name)
                 });
             } else if(message.type == "refresh"){
+                state.mode = "play";
                 console.log("REFRESH", message.maze);
                 state.maze.deserialise(message.maze, v=>v=="1"?'#':'.');
                 // state.maze.map((x,y,v)=>v == '%' ? "#": v)
+            } else if (message.type == "score"){
+                state.mode = "score";
             }
         }
     }

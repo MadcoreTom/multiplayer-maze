@@ -1,6 +1,7 @@
 import { Arr } from "../arr";
 import { maze } from "../maze";
 import { RefreshServerMessage, ScoreServerMessage, UpdateServerMessage } from "../net/net";
+import { XY } from "../state";
 import { ServerState } from "./server";
 
 export function newGame() {
@@ -52,7 +53,7 @@ export function gameLoop(state: ServerState) {
     }
 
     if (state.mode == "play") {
-        const paint = state.paintQueue.map(p => { return { pos: p, name: 'red' } });
+        const paint = state.paintQueue.map(p => { return { pos: [p[0],p[1]] as XY, name: p[2] } });
         state.clients.forEach(c => {
             const message: UpdateServerMessage = {
                 type: "update",
@@ -61,7 +62,7 @@ export function gameLoop(state: ServerState) {
                     // .filter(r=>r.id !== c.id)
                     .map(r => {
                         return {
-                            name: "a",
+                            name: r.id,
                             pos: r.pos,
                             dir: r.dir
                         }
