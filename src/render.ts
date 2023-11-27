@@ -65,6 +65,12 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
         ctx.beginPath();
         ctx.roundRect(100,100,800,800, 20);
         ctx.fill();
+
+        ctx.fillStyle = "yellow";
+        ctx.font = "bold 48px sans-serif"
+        state.scores.forEach((s,i)=>{
+            ctx.fillText(`${s.player}:\t${s.score}`, 500, 200 + i*50);
+        });
     }
 }
 

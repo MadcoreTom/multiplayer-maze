@@ -64,7 +64,9 @@ export class ClientNetwork implements Network {
                 state.maze.deserialise(message.maze, v=>v=="1"?'#':'.');
                 // state.maze.map((x,y,v)=>v == '%' ? "#": v)
             } else if (message.type == "score"){
+                console.log("SCORE", message)
                 state.mode = "score";
+                state.scores = message.scores;
             }
         }
     }

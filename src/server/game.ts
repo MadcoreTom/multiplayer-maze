@@ -83,7 +83,7 @@ export function gameLoop(state: ServerState) {
         state.clients.forEach(c => {
             const message: ScoreServerMessage = {
                 type: "score",
-                scores: state.clients.map(c => { return { player: c.id, score: 123 } })
+                scores: state.clients.map(c => { return { player: c.id, score: getScore(state, c.id) } })
             }
             if (c.socket.readyState == c.socket.OPEN) {
                 c.socket.send(JSON.stringify(message));
@@ -91,4 +91,14 @@ export function gameLoop(state: ServerState) {
         });
     }
 
+}
+
+function getScore(state: ServerState, player: string): number {
+    let count = 0;
+    state.paintMap.forEach((x,y,c) => {
+        if (c == player) {
+            count++;
+        }
+    });
+    return count;
 }
