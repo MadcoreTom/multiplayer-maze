@@ -8,7 +8,7 @@ export type ClientMessage = {
 export type UpdateServerMessage = {
     type: "update",
     paint: { pos: XY, name: string }[],
-    remotes: { name: string, pos: XY, dir: XY }[],
+    remotes: { id: string, pos: XY, dir: XY, score:number }[],
     timer: number
 }
 

@@ -41,7 +41,7 @@ function onConnect(socket: WebSocket, id: string) {
         pos: [0, 0],
         lastTime: 0,
         socket,
-        score: 123
+        score: 0
     };
     state.players.push(client);
 }
@@ -60,7 +60,13 @@ function onMessage(socket: WebSocket, id: string, data: string) {
             const x = Math.floor(me.pos[0]);
             const y = Math.floor(me.pos[1]);
             state.paintQueue.push([x, y, id]);
+            const oldVal = state.maze.getSafe(x, y, "?");
+            const oldPlayer = state.players.filter(p=>p.id == oldVal)[0];
+            if(oldPlayer){
+                oldPlayer.score--;
+            }
             state.maze.setSafe(x, y, id);
+            me.score++;
         }
     } catch (e) {
         console.warn("Malformed message, could not parse JSON");

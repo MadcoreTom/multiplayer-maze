@@ -8,6 +8,9 @@ export function newGame() {
 
 }
 
+const GAME_TIME = 20_000;
+const SCORE_TIME = 2_000;
+
 let loopCount = 0;
 export function gameLoop(state: ServerState) {
 
@@ -17,7 +20,7 @@ export function gameLoop(state: ServerState) {
         state.mode = state.mode == "play" ? "scores" : "play";
 
         if (state.mode == "play") {
-            state.roundEndTime = Date.now() + 20000;
+            state.roundEndTime = Date.now() + GAME_TIME;
             refresh = {
                 type: "refresh",
                 maze: state.maze? state.maze.serialise(b=>b) : "",
@@ -25,10 +28,11 @@ export function gameLoop(state: ServerState) {
             }
             state.paintQueue = [];
         } else {
-            state.roundEndTime = Date.now() + 2000;
+            state.roundEndTime = Date.now() + SCORE_TIME;
             state.maze= new Arr(40,40,"?");
             state.maze.init((x,y)=> (x % 2 == 1 && y % 2 == 1) ? "#" : ".");
             state.mazeGenerator = maze(state.maze, ".", "#", 15);
+            state.players.forEach(p=>p.score=0)
         }
         console.log("MODE", state.mode)
     }
@@ -62,9 +66,10 @@ export function gameLoop(state: ServerState) {
                     // .filter(r=>r.id !== c.id)
                     .map(r => {
                         return {
-                            name: r.id,
+                            id: r.id,
                             pos: r.pos,
-                            dir: r.dir
+                            dir: r.dir,
+                            score: r.score
                         }
                     }),
                 paint
@@ -75,7 +80,7 @@ export function gameLoop(state: ServerState) {
         });
 
         if (loopCount++ % 10 == 0) {
-            console.table(state.players.map(c => [c.id, c.pos]));
+            console.table(state.players.map(c => [c.id, c.pos, c.score]));
         }
 
         state.paintQueue = [];

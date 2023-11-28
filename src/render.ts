@@ -44,12 +44,25 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     // remote players
     ctx.strokeStyle = "blue";
     state.players.forEach(r=>{
+        /*
         ctx.beginPath();
         
         ctx.arc(mod(r.estPos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.estPos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         // ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
         ctx.stroke();
+        */
+       
+        // use r.pos to show last know position instead of estimated pos
+        ctx.fillStyle = getColour(r.id);
+        ctx.beginPath();
+        ctx.arc(mod(r.estPos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.estPos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc((r.estPos[0] - state.offset[0]) * SCALE, (r.estPos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.fill();
     });
 
     // scores
@@ -62,6 +75,7 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
         ctx.fillStyle = "yellow";
         ctx.font = "bold 48px sans-serif"
         state.players.forEach((p,i)=>{
+            ctx.fillStyle = getColour(p.id);
             ctx.fillText(`${p.id}:\t${p.score}`, 500, 200 + i*50);
         });
     }

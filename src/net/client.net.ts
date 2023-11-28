@@ -53,8 +53,8 @@ export class ClientNetwork implements Network {
                         dir: r.dir,
                         lastTime: state.time, //todo
                         estPos: [...r.pos] as XY,
-                        score:Math.random(),
-                        id: r.name // TODO
+                        score: r.score,
+                        id: r.id
                     }
                 });
                 message.paint.forEach(p => {
