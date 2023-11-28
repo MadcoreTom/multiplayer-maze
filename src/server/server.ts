@@ -1,37 +1,18 @@
 import { Server, WebSocket, OPEN } from "ws";
-import { ClientMessage, ServerMessage } from "../net/net";
-import { XY } from "../state";
+import { ClientMessage } from "../net/net";
 import { Arr } from "../arr";
 import { MAZE_SIZE } from "../constants";
 import { gameLoop } from "./game";
+import { Client, ServerState } from "../state/common.state";
 
 const TICK_RATE = 40;
 
-type Client = {
-    pos: XY,
-    dir: XY,
-    lastTime: number,
-    id: string,
-    socket: WebSocket
-};
-export type ServerState = {
-    mode: "play" | "scores",
-    // seed:number,
-    roundEndTime: number,
-    // paint:Arr<string>,
-    clients: Client[],
-    paintQueue: [number,number,string][],
-    paintMap: Arr<string | null>
-    maze?:Arr<boolean>
-    mazeGenerator?: Iterator<void, void>,
-}
-
 export const state: ServerState = {
     mode: "play",
-    clients: [],
+    players: [],
     roundEndTime: 0,
     paintQueue: [],
-    paintMap: new Arr(MAZE_SIZE, MAZE_SIZE, null)
+    maze: new Arr(MAZE_SIZE, MAZE_SIZE, " ")
 };
 
 const server = new Server({ port: 8001 });
@@ -59,9 +40,10 @@ function onConnect(socket: WebSocket, id: string) {
         dir: [0, 0],
         pos: [0, 0],
         lastTime: 0,
-        socket
+        socket,
+        score: 123
     };
-    state.clients.push(client);
+    state.players.push(client);
 }
 
 function onMessage(socket: WebSocket, id: string, data: string) {
@@ -70,7 +52,7 @@ function onMessage(socket: WebSocket, id: string, data: string) {
         const message = JSON.parse(data) as ClientMessage;
         // console.log(">>", message);
         if ("update" in message && message.update) {
-            const me = state.clients.filter(c => c.id == id)[0];
+            const me = state.players.filter(c => c.id == id)[0];
             me.pos[0] = message.update.pos[0];
             me.pos[1] = message.update.pos[1];
             me.dir[0] = message.update.dir[0];
@@ -78,7 +60,7 @@ function onMessage(socket: WebSocket, id: string, data: string) {
             const x = Math.floor(me.pos[0]);
             const y = Math.floor(me.pos[1]);
             state.paintQueue.push([x, y, id]);
-            state.paintMap.setSafe(x, y, id);
+            state.maze.setSafe(x, y, id);
         }
     } catch (e) {
         console.warn("Malformed message, could not parse JSON");
@@ -88,14 +70,14 @@ function onMessage(socket: WebSocket, id: string, data: string) {
 function onClose(socket: WebSocket, id: string) {
     console.log("DISCONNECT")
     // remove from state
-    state.clients = state.clients.filter(c => c.id !== id);
+    state.players = state.players.filter(c => c.id !== id);
     // broadcast
 }
 
 // TODO replace
 let playerId = 0;
 function randomId(): string {
-    return (new Number(playerId++)).toString(32);
+    return (new Number(playerId++)).toString(16).toUpperCase();
 }
 
 function loop() {

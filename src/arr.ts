@@ -50,8 +50,8 @@ export class Arr<T>{
         return x * this.height + y;
     }
 
-    public serialise(map:(arg:T)=>string, separator:string = ","):string{
-        let result = this.width + separator + this.height + separator;
+    public serialise(map:(arg:T)=>string, mainSeparator:string=",",separator:string = ""):string{
+        let result = this.width + mainSeparator + this.height + mainSeparator;
         result += this.data.map(map).join(separator);
         return result;
     }
@@ -63,20 +63,19 @@ export class Arr<T>{
         return this.width;
     }
 
-    public deserialise(input:string,parse:(arg:string)=>T, separator:string = ","){
-        const parts = input.split(separator);
+    public deserialise(input:string,parse:(arg:string)=>T,mainSeparator:string=",", separator:string = ""){
+        const parts = input.split(mainSeparator);
         const width = parseInt(parts[0]);
         const height = parseInt(parts[1]);
-        parts.shift();
-        parts.shift();
         const len = width*height;
-        if(parts.length == len){
+        const contents = parts[2].split(separator);
+        if(contents.length == len){
             this.width = width;
             this.height = height;
-            this.data = parts.map(parse);
+            this.data = contents.map(parse);
             console.log("Done")
         } else {
-            console.log(parts.length , "!=", len)
+            console.log(contents.length , "!=", len)
         }
     }
 }

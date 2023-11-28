@@ -3,19 +3,12 @@ import { State } from "./state";
 
 const SCALE = Math.floor(1000 / MAZE_SIZE);
 
-// const COLOUR_MAP = {
-//     ".": "black",
-//     "#": "white",
-//     "?": "red",
-//     "%": "#FFC6B1"
-// }
-
 function mod(n:number,m:number):number{
     return ((n % m)+m)%m;
 }
 
 export function render(ctx: CanvasRenderingContext2D, state: State) {
-    const { maze, offset, path } = state;
+    const { maze, offset } = state;
     ctx.fillStyle = "grey";
     ctx.fillRect(0, 0, 1000, 1000);
 
@@ -50,17 +43,17 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
 
     // remote players
     ctx.strokeStyle = "blue";
-    state.remotePlayers.forEach(r=>{
+    state.players.forEach(r=>{
         ctx.beginPath();
         
-        ctx.arc(mod(r.pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
+        ctx.arc(mod(r.estPos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.estPos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         // ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
-        ctx.arc((r.lastPos[0] - state.offset[0]) * SCALE, (r.lastPos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
         ctx.stroke();
     });
 
     // scores
-    if(state.mode == "score"){
+    if(state.mode == "scores"){
         ctx.fillStyle = "rgba(0,0,0,0.8)";
         ctx.beginPath();
         ctx.roundRect(100,100,800,800, 20);
@@ -68,17 +61,35 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
 
         ctx.fillStyle = "yellow";
         ctx.font = "bold 48px sans-serif"
-        state.scores.forEach((s,i)=>{
-            ctx.fillText(`${s.player}:\t${s.score}`, 500, 200 + i*50);
+        state.players.forEach((p,i)=>{
+            ctx.fillText(`${p.id}:\t${p.score}`, 500, 200 + i*50);
         });
     }
 }
 
-
-const colours:{[id:string]:string}={
+// TODO use https://lospec.com/palette-list/r-place-2022-day2
+const colours: { [id: string]: string } = {
     ".": "#060606",
-    "#": "#f2f2f2"
+    "#": "#f2f2f2",
+    "0": "#b44ac0",
+    "1": "#009eaa",
+    "2": "#ff99aa",
+    "3": "#ffd635",
+    "4": "#493ac1",
+    "5": "#2450a4",
+    "6": "#ff4500",
+    "7": "#7eed56",
+    "8": "#51e9f4",
+    "9": "#00a368",
+    "A": "#00cc78",
+    "B": "#ffa800",
+    "C": "#6a5cff",
+    "D": "#00756f",
+    "E": "#be0039",
+    "F": "#811e9f"
 };
+
+
 function getColour(key:string):string{
     let a = colours[key];
     if(!a){

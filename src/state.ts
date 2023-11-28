@@ -3,17 +3,13 @@ import { Path } from "./astar";
 import { SimulatedNetwork } from "./net/simulated.net";
 import { Network } from "./net/net";
 import { ClientNetwork } from "./net/client.net";
+import { ClientState } from "./state/common.state";
 
 export type XY = [number, number];
 
-export type RemotePlayer = {
-    lastPos:XY,
-    lastDir: XY,
-    lastTime: number,
-    pos: XY
-}
 
-export type State = {
+export type State = ClientState
+/* {
     maze: Arr<string>,
     offset: XY,
     pos:XY,
@@ -26,7 +22,7 @@ export type State = {
     remotePlayers: RemotePlayer[]
     scores: {player:string, score:number}[],
     mode: "play"|"score",
-}
+}*/
 
 export function initState(size: number): State {
     return {
@@ -37,8 +33,7 @@ export function initState(size: number): State {
         time: 0,
         server:new ClientNetwork(),
         gameTimeRemaining:0,
-        remotePlayers: [],
-        mode: "play",
-        scores: []
+        players: [],
+        mode: "play"
     }
 }

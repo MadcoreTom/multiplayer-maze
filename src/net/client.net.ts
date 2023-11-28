@@ -47,12 +47,14 @@ export class ClientNetwork implements Network {
 
             if (message.type == "update") {
                 state.gameTimeRemaining = parseFloat("" + message.timer);
-                state.remotePlayers = message.remotes.map(r => {
+                state.players = message.remotes.map(r => {
                     return {
-                        lastPos: r.pos,
-                        lastDir: r.dir,
+                        pos: r.pos,
+                        dir: r.dir,
                         lastTime: state.time, //todo
-                        pos: [...r.pos] as XY
+                        estPos: [...r.pos] as XY,
+                        score:Math.random(),
+                        id: r.name // TODO
                     }
                 });
                 message.paint.forEach(p => {
@@ -61,12 +63,12 @@ export class ClientNetwork implements Network {
             } else if(message.type == "refresh"){
                 state.mode = "play";
                 console.log("REFRESH", message.maze);
-                state.maze.deserialise(message.maze, v=>v=="1"?'#':'.');
+                state.maze.deserialise(message.maze, v=>v);
                 // state.maze.map((x,y,v)=>v == '%' ? "#": v)
             } else if (message.type == "score"){
                 console.log("SCORE", message)
-                state.mode = "score";
-                state.scores = message.scores;
+                state.mode = "scores";
+                // state.scores = message.scores;
             }
         }
     }

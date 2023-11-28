@@ -17,29 +17,17 @@ export function update(state: State) {
         state.server.sendUpdate(state.pos, dir);
     }
 
-
-    // Keep generating the map
-    if (!state.mazeGenerator) {
-        state.mazeGenerator = maze(state.maze, ".", "#", MAX_DISTANCE);
-    }
-    let result;
-    for (let i = 0; i < STEPS_PER_FRAME && (!result || !result.done); i++) {
-        result = state.mazeGenerator.next();
-    }
-    if (result.done) {
-        // state.maze.setSafe(Math.floor(state.pos[0]), Math.floor(state.pos[1]), "%");
-        state.server.processMessages(state);
-    }
+    state.server.processMessages(state);
 
     // set remote player state
-    state.remotePlayers.forEach(r=>{
+    state.players.forEach(r=>{
         const move:XY = [
-            (state.time - r.lastTime) * MOVE_SPEED * r.lastDir[0],
-            (state.time - r.lastTime) * MOVE_SPEED * r.lastDir[1]
+            (state.time - r.lastTime) * MOVE_SPEED * r.dir[0],
+            (state.time - r.lastTime) * MOVE_SPEED * r.dir[1]
         ];
-        moveAndTestCollision(state, r.lastPos, move, 0.3,
+        moveAndTestCollision(state, r.pos, move, 0.3,
             (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
-            result =>  r.pos = result
+            result =>  r.estPos = result
         );
     })
 }

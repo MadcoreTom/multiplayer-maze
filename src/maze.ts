@@ -5,6 +5,12 @@
 import { Arr } from "./arr";
 import { solve } from "./astar";
 
+export const MAZE_VALUES: { [id: string]: "WALL" | "FLOOR" | "PLAYER" } = {
+    "#": "WALL",
+    ".": "FLOOR"
+}
+"0123456789ABCDEF".split("").forEach(v => MAZE_VALUES[v] = "PLAYER");
+
 type Option = {
     a: [number, number],
     b: [number, number],
