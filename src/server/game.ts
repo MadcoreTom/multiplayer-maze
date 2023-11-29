@@ -29,7 +29,8 @@ export function gameLoop(state: ServerState) {
             state.paintQueue = [];
         } else {
             state.roundEndTime = Date.now() + SCORE_TIME;
-            state.maze= new Arr(40,40,"?");
+            const size = 14 + 4 * state.players.length;
+            state.maze= new Arr(size,size,"?");
             state.maze.init((x,y)=> (x % 2 == 1 && y % 2 == 1) ? "#" : ".");
             state.mazeGenerator = maze(state.maze, ".", "#", 15);
             state.players.forEach(p=>p.score=0)
@@ -61,7 +62,7 @@ export function gameLoop(state: ServerState) {
         state.players.forEach(c => {
             const message: UpdateServerMessage = {
                 type: "update",
-                timer: timer,
+                timer: timer / GAME_TIME,
                 remotes: state.players
                     // .filter(r=>r.id !== c.id)
                     .map(r => {

@@ -69,6 +69,9 @@ export class ClientNetwork implements Network {
                 console.log("SCORE", message)
                 state.mode = "scores";
                 // state.scores = message.scores;
+            }else if (message.type == "join"){
+                console.log("JOIN", message)
+                state.myId = message.id;
             }
         }
     }

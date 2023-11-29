@@ -1,11 +1,11 @@
 import { Server, WebSocket, OPEN } from "ws";
-import { ClientMessage } from "../net/net";
+import { ClientMessage, OnJoinServerMessage } from "../net/net";
 import { Arr } from "../arr";
 import { MAZE_SIZE } from "../constants";
 import { gameLoop } from "./game";
 import { Client, ServerState } from "../state/common.state";
 
-const TICK_RATE = 40;
+const TICK_RATE = 30;
 
 export const state: ServerState = {
     mode: "play",
@@ -19,7 +19,7 @@ const server = new Server({ port: 8001 });
 const decoder = new TextDecoder();
 
 server.on('connection', socket => {
-    const id = randomId();
+    const id = nextPlayerId();
 
     if (socket.readyState === OPEN) {
         onConnect(socket, id);
@@ -44,6 +44,11 @@ function onConnect(socket: WebSocket, id: string) {
         score: 0
     };
     state.players.push(client);
+    const msg:OnJoinServerMessage = {
+        type:"join",
+        id
+    }
+    socket.send(JSON.stringify(msg));
 }
 
 function onMessage(socket: WebSocket, id: string, data: string) {
@@ -51,7 +56,7 @@ function onMessage(socket: WebSocket, id: string, data: string) {
     try {
         const message = JSON.parse(data) as ClientMessage;
         // console.log(">>", message);
-        if ("update" in message && message.update) {
+        if ("update" in message && message.update && state.mode == "play") {
             const me = state.players.filter(c => c.id == id)[0];
             me.pos[0] = message.update.pos[0];
             me.pos[1] = message.update.pos[1];
@@ -82,8 +87,8 @@ function onClose(socket: WebSocket, id: string) {
 
 // TODO replace
 let playerId = 0;
-function randomId(): string {
-    return (new Number(playerId++)).toString(16).toUpperCase();
+function nextPlayerId(): string {
+    return (new Number(playerId++%16)).toString(16).toUpperCase();
 }
 
 function loop() {

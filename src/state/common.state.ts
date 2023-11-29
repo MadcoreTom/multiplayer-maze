@@ -45,4 +45,5 @@ export type ClientState = CommonState<RemotePlayer> & {
     time: number,
     gameTimeRemaining: number,
     server: Network,
+    myId:string
 }

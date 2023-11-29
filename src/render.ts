@@ -15,8 +15,8 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     // const smallOffset = [offset[0]%1, offset[1]%1];
     const smallOffset = [mod(offset[0],1), mod(offset[1],1)];
     const tileOffset = [Math.floor(offset[0]),Math.floor(offset[1])];
-    for(let x = 0; x<maze.getWidth();x++){
-        for(let y=0;y<maze.getHeight();y++){
+    for(let x = 0; x<1000/SCALE+1;x++){
+        for(let y=0;y<1000/SCALE+1;y++){
             // const xx = (x + tileOffset[0] + maze.getWidth()) % maze.getWidth();
             const v = maze.getSafe(
                 (x+tileOffset[0] + maze.getWidth()) % maze.getWidth(),
@@ -28,40 +28,49 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     }
 
 
-    ctx.fillStyle = "orangered";
-    ctx.beginPath();
-    ctx.arc((state.pos[0] - state.offset[0]) * SCALE, (state.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
-    ctx.fill();
 
+    if (state.mode == "play") {
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(50, 50, 45, 0, 2 * Math.PI);
+        ctx.lineTo(50, 50);
+        ctx.fill();
+        ctx.fillStyle = getColour(state.myId);
+        ctx.beginPath();
+        ctx.arc(50, 50, 40, - Math.PI / 2, 2 * Math.PI * state.gameTimeRemaining - Math.PI / 2, true);
+        ctx.lineTo(50, 50);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(50, 50, 40, - Math.PI / 2, 2 * Math.PI * state.gameTimeRemaining - Math.PI / 2, false);
+        ctx.lineTo(50, 50);
+        ctx.fill();
+    }
 
-    // timer
-    ctx.font = "small-caps bold 40px monospace";
-    ctx.fillStyle = "black";
-    ctx.fillText("Timer: " + Math.floor(state.gameTimeRemaining/100)/10, 10,30+2);
-    ctx.fillStyle = "yellow";
-    ctx.fillText("Timer: " + Math.floor(state.gameTimeRemaining/100)/10, 10,30);
+    // Player icons
+    state.players.forEach((r, i) => {
+        ctx.fillStyle = getColour(r.id);
+        ctx.beginPath();
+        const radius = SCALE * 0.6 * 0.5 * (r.id == state.myId ? 1 : 0.5);
+        ctx.arc(1000 - (i + 0.5) * SCALE, 0.6 * SCALE, radius, 0, 2 * Math.PI);
+        ctx.fill();
+    });
 
     // remote players
     ctx.strokeStyle = "blue";
     state.players.forEach(r=>{
-        /*
-        ctx.beginPath();
-        
-        ctx.arc(mod(r.estPos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.estPos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
-        // ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
-        ctx.arc((r.pos[0] - state.offset[0]) * SCALE, (r.pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
-        ctx.stroke();
-        */
+
+        let pos = r.id == state.myId ? state.pos : r.estPos;
        
         // use r.pos to show last know position instead of estimated pos
         ctx.fillStyle = getColour(r.id);
         ctx.beginPath();
-        ctx.arc(mod(r.estPos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(r.estPos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
+        ctx.arc(mod(pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         ctx.fill();
         
-        ctx.fillStyle = "white";
+        ctx.fillStyle = r.id == state.myId ? (state.time % 500 < 250 ? "white" : "black") : "white";
         ctx.beginPath();
-        ctx.arc((r.estPos[0] - state.offset[0]) * SCALE, (r.estPos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.arc((pos[0] - state.offset[0]) * SCALE, (pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
         ctx.fill();
     });
 
