@@ -34,6 +34,8 @@ export function initState(size: number): State {
         server:new ClientNetwork(),
         gameTimeRemaining:0,
         players: [],
-        mode: "play"
+        mode: "play",
+        overlayPos: 0.5,
+        myId:"?"
     }
 }

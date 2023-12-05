@@ -13,7 +13,7 @@ export function update(state: State) {
     const dir = move(state);
     state.offset[0] = state.pos[0] - MAZE_SIZE / 2;
     state.offset[1] = state.pos[1] - MAZE_SIZE / 2;
-    if(dir){
+    if(dir && state.mode == "play"){
         state.server.sendUpdate(state.pos, dir);
     }
 
@@ -29,7 +29,13 @@ export function update(state: State) {
             (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
             result =>  r.estPos = result
         );
-    })
+    });
+
+    if(state.mode == "play"){
+        state.overlayPos = Math.max(0,state.overlayPos - state.delta * 0.003)
+    } else {
+        state.overlayPos = Math.min(1,state.overlayPos + state.delta * 0.003)
+    }
 }
 
 function move(state: State) : XY | undefined{

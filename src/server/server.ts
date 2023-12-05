@@ -41,6 +41,7 @@ function onConnect(socket: WebSocket, id: string) {
         pos: [0, 0],
         lastTime: 0,
         socket,
+        firstRefresh:true,
         score: 0
     };
     state.players.push(client);

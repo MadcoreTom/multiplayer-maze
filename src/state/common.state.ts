@@ -15,7 +15,8 @@ type CommonPlayer = {
 
 export type Client = CommonPlayer & {
     lastTime: number,
-    socket: WebSocket
+    socket: WebSocket,
+    firstRefresh:boolean
 };
 
 export type RemotePlayer = CommonPlayer & {
@@ -45,5 +46,6 @@ export type ClientState = CommonState<RemotePlayer> & {
     time: number,
     gameTimeRemaining: number,
     server: Network,
-    myId:string
+    myId:string,
+    overlayPos: number
 }

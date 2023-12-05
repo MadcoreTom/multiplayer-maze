@@ -63,29 +63,61 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
         let pos = r.id == state.myId ? state.pos : r.estPos;
        
         // use r.pos to show last know position instead of estimated pos
-        ctx.fillStyle = getColour(r.id);
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.beginPath();
         ctx.arc(mod(pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         ctx.fill();
         
-        ctx.fillStyle = r.id == state.myId ? (state.time % 500 < 250 ? "white" : "black") : "white";
+        ctx.fillStyle =getColour(r.id);
         ctx.beginPath();
-        ctx.arc((pos[0] - state.offset[0]) * SCALE, (pos[1] - state.offset[1]) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.arc(mod(pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
         ctx.fill();
     });
 
+
+    if (state.overlayPos > 0) {
+        ctx.fillStyle = `rgba(255,255,255,${state.overlayPos * 0.9})`;
+        if (state.overlayPos < 1) {
+            // top left
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(1000 * state.overlayPos, 0);
+            ctx.lineTo(0, 1000 * state.overlayPos);
+            ctx.fill();
+            // bottom right
+            ctx.beginPath();
+            ctx.moveTo(1000, 1000);
+            ctx.lineTo(1000 - 1000 * state.overlayPos, 1000);
+            ctx.lineTo(1000, 1000 - 1000 * state.overlayPos);
+            ctx.fill();
+        } else {
+            ctx.fillRect(0, 0, 1000, 1000);
+        }
+    }
+
     // scores
     if(state.mode == "scores"){
-        ctx.fillStyle = "rgba(0,0,0,0.8)";
-        ctx.beginPath();
-        ctx.roundRect(100,100,800,800, 20);
-        ctx.fill();
-
-        ctx.fillStyle = "yellow";
+        // round over
+        // the winner
         ctx.font = "bold 48px sans-serif"
-        state.players.forEach((p,i)=>{
-            ctx.fillStyle = getColour(p.id);
-            ctx.fillText(`${p.id}:\t${p.score}`, 500, 200 + i*50);
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText("Round Over", 500, 50);
+
+        // TODO do this once, not every frame
+        const scores = state.players.map(p => {
+            return {
+                colour: getColour(p.id),
+                text: p.id == state.myId ? "YOU >> " + p.score : "" + p.score,
+                score: p.score
+            };
+        }).sort((a, b) => b.score - a.score);
+
+        scores.forEach((p, i) => {
+            ctx.fillStyle = "black";
+            ctx.fillText(p.text, 500, 200 + i * 50 + 2);
+            ctx.fillStyle = p.colour;
+            ctx.fillText(p.text, 500, 200 + i * 50);
         });
     }
 }

@@ -53,8 +53,19 @@ export function gameLoop(state: ServerState) {
         state.players.forEach(c => {
             if (c.socket.readyState == c.socket.OPEN) {
                 c.socket.send(JSON.stringify(refresh));
+                c.firstRefresh = false;
             }
         });
+    }
+    if(state.mode == "play"){
+        state.players.filter(p=>p.firstRefresh).forEach(c=>{
+            c.socket.send(JSON.stringify({
+                type: "refresh",
+                maze: state.maze? state.maze.serialise(b=>b) : "",
+                timer: timer
+            }));
+            c.firstRefresh = false;
+        })
     }
 
     if (state.mode == "play") {
