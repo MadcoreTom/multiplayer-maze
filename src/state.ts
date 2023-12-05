@@ -9,20 +9,7 @@ export type XY = [number, number];
 
 
 export type State = ClientState
-/* {
-    maze: Arr<string>,
-    offset: XY,
-    pos:XY,
-    path?: Path,
-    delta: number,
-    time: number,
-    mazeGenerator?: Iterator<void, void>,
-    server: Network,
-    gameTimeRemaining: number,
-    remotePlayers: RemotePlayer[]
-    scores: {player:string, score:number}[],
-    mode: "play"|"score",
-}*/
+
 
 export function initState(size: number): State {
     return {

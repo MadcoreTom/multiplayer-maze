@@ -3,8 +3,8 @@ import { State } from "./state";
 
 const SCALE = Math.floor(1000 / MAZE_SIZE);
 
-function mod(n:number,m:number):number{
-    return ((n % m)+m)%m;
+function mod(n: number, m: number): number {
+    return ((n % m) + m) % m;
 }
 
 export function render(ctx: CanvasRenderingContext2D, state: State) {
@@ -13,14 +13,14 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     ctx.fillRect(0, 0, 1000, 1000);
 
     // const smallOffset = [offset[0]%1, offset[1]%1];
-    const smallOffset = [mod(offset[0],1), mod(offset[1],1)];
-    const tileOffset = [Math.floor(offset[0]),Math.floor(offset[1])];
-    for(let x = 0; x<1000/SCALE+1;x++){
-        for(let y=0;y<1000/SCALE+1;y++){
+    const smallOffset = [mod(offset[0], 1), mod(offset[1], 1)];
+    const tileOffset = [Math.floor(offset[0]), Math.floor(offset[1])];
+    for (let x = 0; x < 1000 / SCALE + 1; x++) {
+        for (let y = 0; y < 1000 / SCALE + 1; y++) {
             // const xx = (x + tileOffset[0] + maze.getWidth()) % maze.getWidth();
             const v = maze.getSafe(
-                (x+tileOffset[0] + maze.getWidth()) % maze.getWidth(),
-                (y+tileOffset[1] + maze.getHeight()) % maze.getHeight(),
+                (x + tileOffset[0] + maze.getWidth()) % maze.getWidth(),
+                (y + tileOffset[1] + maze.getHeight()) % maze.getHeight(),
                 '#');
             ctx.fillStyle = getColour(v);
             ctx.fillRect(Math.round((x - smallOffset[0]) * SCALE), Math.round((y - smallOffset[1]) * SCALE), SCALE, SCALE);
@@ -58,19 +58,19 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
 
     // remote players
     ctx.strokeStyle = "blue";
-    state.players.forEach(r=>{
+    state.players.forEach(r => {
 
         let pos = r.id == state.myId ? state.pos : r.estPos;
-       
+
         // use r.pos to show last know position instead of estimated pos
         ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.beginPath();
-        ctx.arc(mod(pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
+        ctx.arc(mod(pos[0] - state.offset[0], maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1], maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5, 0, 2 * Math.PI);
         ctx.fill();
-        
-        ctx.fillStyle =getColour(r.id);
+
+        ctx.fillStyle = getColour(r.id);
         ctx.beginPath();
-        ctx.arc(mod(pos[0] - state.offset[0],maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1],maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5*0.5, 0, 2 * Math.PI);
+        ctx.arc(mod(pos[0] - state.offset[0], maze.getWidth()) * SCALE, mod(pos[1] - state.offset[1], maze.getHeight()) * SCALE, SCALE * 0.6 * 0.5 * 0.5, 0, 2 * Math.PI);
         ctx.fill();
     });
 
@@ -96,31 +96,53 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     }
 
     // scores
-    if(state.mode == "scores"){
-        // round over
-        // the winner
-        ctx.font = "bold 48px sans-serif"
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText("Round Over", 500, 50);
-
-        // TODO do this once, not every frame
-        const scores = state.players.map(p => {
-            return {
-                colour: getColour(p.id),
-                text: p.id == state.myId ? "YOU >> " + p.score : "" + p.score,
-                score: p.score
-            };
-        }).sort((a, b) => b.score - a.score);
-
-        scores.forEach((p, i) => {
-            ctx.fillStyle = "black";
-            ctx.fillText(p.text, 500, 200 + i * 50 + 2);
-            ctx.fillStyle = p.colour;
-            ctx.fillText(p.text, 500, 200 + i * 50);
-        });
+    if (state.mode == "scores") {
+        renderScores(ctx, state);
     }
 }
+
+function renderScores(ctx: CanvasRenderingContext2D, state: State) {
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.fillText("Round Over", 500, 50);
+
+    // TODO do this once, not every frame
+    const scores = state.players.map(p => {
+        return {
+            colour: getColour(p.id),
+            score: p.score,
+            isYou: p.id == state.myId,
+        };
+    }).sort((a, b) => b.score - a.score);
+
+    scores.forEach((p, i) => {
+        let shadow = "black";
+        const y = 200 + i * 50;
+        if (p.isYou) {
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.roundRect(350, y - 40, 300, 50, 5);
+            ctx.fill();
+            shadow = "white"
+        }
+        const nth = NTH[i];
+        if (nth) {
+            ctx.font = "bold 24px sans-serif"
+            ctx.fillStyle = shadow;
+            ctx.fillText(nth, 450, y - 10 + 2);
+            ctx.fillStyle = p.colour;
+            ctx.fillText(nth, 450, y - 10);
+            ctx.font = "bold 48px sans-serif"
+        }
+
+        ctx.fillStyle = shadow;
+        ctx.fillText("" + p.score, 550, y + 2);
+        ctx.fillStyle = p.colour;
+        ctx.fillText("" + p.score, 550, y);
+    });
+}
+
+const NTH = ["1st", "2nd", "3rd"]
 
 // TODO use https://lospec.com/palette-list/r-place-2022-day2
 const colours: { [id: string]: string } = {
@@ -145,11 +167,11 @@ const colours: { [id: string]: string } = {
 };
 
 
-function getColour(key:string):string{
+function getColour(key: string): string {
     let a = colours[key];
-    if(!a){
+    if (!a) {
         a = `hsl(${Math.floor(Math.random() * 360)}, 50%, 80%)`;
-        colours[key]=a;
+        colours[key] = a;
     }
     return a;
 }
