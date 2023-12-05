@@ -1,7 +1,4 @@
 import { Arr } from "./arr"
-import { Path } from "./astar";
-import { SimulatedNetwork } from "./net/simulated.net";
-import { Network } from "./net/net";
 import { ClientNetwork } from "./net/client.net";
 import { ClientState } from "./state/common.state";
 

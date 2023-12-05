@@ -1,6 +1,7 @@
 import { Arr } from "../arr";
 import { Network } from "../net/net";
 import { XY } from "../state";
+import {  WebSocket } from "ws";
 
 export type GameMode = "play" | "scores";
 
@@ -16,7 +17,8 @@ type CommonPlayer = {
 export type Client = CommonPlayer & {
     lastTime: number,
     socket: WebSocket,
-    firstRefresh:boolean
+    firstRefresh:boolean,
+    lastMessage: number
 };
 
 export type RemotePlayer = CommonPlayer & {

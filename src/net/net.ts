@@ -34,4 +34,6 @@ export interface Network {
     sendUpdate(pos: XY, ddirection: XY): void;
 
     processMessages(state: State);
+
+    connected(): boolean;
 }

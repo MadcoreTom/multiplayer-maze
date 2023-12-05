@@ -99,6 +99,16 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     if (state.mode == "scores") {
         renderScores(ctx, state);
     }
+
+    if(!state.server.connected()){
+        
+        ctx.font = "bold 24px sans-serif"
+        ctx.fillStyle = "red";
+        ctx.fillText("DISCONNECTED", 450, 400+2);
+        ctx.fillStyle = "yellow";
+        ctx.fillText("DISCONNECTED", 450, 400);
+        ctx.font = "bold 48px sans-serif"
+    }
 }
 
 function renderScores(ctx: CanvasRenderingContext2D, state: State) {

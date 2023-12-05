@@ -4,6 +4,7 @@ import { ClientMessage, Network, ServerMessage } from "./net";
 const PORT = 8001;
 
 export class ClientNetwork implements Network {
+    private isConnected = false;
     private socket: WebSocket;
     private messages: ServerMessage[] = [];
     public constructor() {
@@ -12,9 +13,11 @@ export class ClientNetwork implements Network {
         this.socket = new WebSocket(`ws://${host}:${PORT}/socketserver`);
         this.socket.onopen = (ev) => {
             console.log("Connected");
+            this.isConnected = true;
         };
         this.socket.onclose = (ev) => {
             console.log("Disconnected");
+            this.isConnected = false;
         }
         this.socket.onmessage = (ev) => {
             const data = ev.data as string;
@@ -74,5 +77,9 @@ export class ClientNetwork implements Network {
                 state.myId = message.id;
             }
         }
+    }
+
+    connected(): boolean {
+        return this.isConnected;
     }
 }

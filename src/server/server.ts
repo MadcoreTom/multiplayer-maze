@@ -42,7 +42,8 @@ function onConnect(socket: WebSocket, id: string) {
         lastTime: 0,
         socket,
         firstRefresh:true,
-        score: 0
+        score: 0,
+        lastMessage: Date.now()
     };
     state.players.push(client);
     const msg:OnJoinServerMessage = {
@@ -59,6 +60,7 @@ function onMessage(socket: WebSocket, id: string, data: string) {
         // console.log(">>", message);
         if ("update" in message && message.update && state.mode == "play") {
             const me = state.players.filter(c => c.id == id)[0];
+            me.lastMessage = Date.now();
             me.pos[0] = message.update.pos[0];
             me.pos[1] = message.update.pos[1];
             me.dir[0] = message.update.dir[0];

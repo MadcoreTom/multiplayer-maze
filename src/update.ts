@@ -20,16 +20,18 @@ export function update(state: State) {
     state.server.processMessages(state);
 
     // set remote player state
-    state.players.forEach(r=>{
-        const move:XY = [
-            (state.time - r.lastTime) * MOVE_SPEED * r.dir[0],
-            (state.time - r.lastTime) * MOVE_SPEED * r.dir[1]
-        ];
-        moveAndTestCollision(state, r.pos, move, 0.3,
-            (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
-            result =>  r.estPos = result
-        );
-    });
+    if (state.mode == "play") {
+        state.players.forEach(r => {
+            const move: XY = [
+                (state.time - r.lastTime) * MOVE_SPEED * r.dir[0],
+                (state.time - r.lastTime) * MOVE_SPEED * r.dir[1]
+            ];
+            moveAndTestCollision(state, r.pos, move, 0.3,
+                (s, p) => s.maze.getSafe(wrap(p[0], 0, s.maze.getWidth()), wrap(p[1], 0, s.maze.getHeight()), "?") == ".",
+                result => r.estPos = result
+            );
+        });
+    }
 
     if(state.mode == "play"){
         state.overlayPos = Math.max(0,state.overlayPos - state.delta * 0.003)

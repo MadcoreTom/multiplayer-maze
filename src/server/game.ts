@@ -9,7 +9,7 @@ export function newGame() {
 }
 
 const GAME_TIME = 20_000;
-const SCORE_TIME = 2_000;
+const SCORE_TIME = 3_000;
 
 let loopCount = 0;
 export function gameLoop(state: ServerState) {
@@ -106,6 +106,15 @@ export function gameLoop(state: ServerState) {
                 c.socket.send(JSON.stringify(message));
             }
         });
+    }
+
+    // drop players who haven't sent a message for a while
+    const exp = Date.now() - SCORE_TIME * 1.2;
+    const toDropIds = state.players.filter(p=>p.lastMessage < exp).map(p=>p.id);
+    if(toDropIds.length > 0){
+        console.warn("Dropping inactive players", toDropIds);
+        state.players.filter(p=>toDropIds.indexOf(p.id) >= 0).forEach(p=>p.socket.close());
+        state.players = state.players.filter(p=>toDropIds.indexOf(p.id) < 0);
     }
 
 }
