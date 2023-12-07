@@ -1,5 +1,6 @@
 import { Arr } from "../arr";
 import { Network } from "../net/net";
+import { Sfx } from "../sound";
 import { XY } from "../state";
 import {  WebSocket } from "ws";
 
@@ -49,5 +50,6 @@ export type ClientState = CommonState<RemotePlayer> & {
     gameTimeRemaining: number,
     server: Network,
     myId:string,
-    overlayPos: number
+    overlayPos: number,
+    soundQueue: Sfx[]
 }

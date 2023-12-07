@@ -1,3 +1,4 @@
+import { COLLECT, MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
 import { ClientMessage, Network, ServerMessage } from "./net";
 
@@ -61,18 +62,27 @@ export class ClientNetwork implements Network {
                     }
                 });
                 message.paint.forEach(p => {
-                    state.maze.setSafe(p.pos[0], p.pos[1], p.name)
+                    if (p.name == state.myId) {
+                        const existing = state.maze.getSafe(p.pos[0], p.pos[1], "?");
+                        if(existing != p.name){
+                            state.soundQueue.push(MENU_MOVE);
+                        }
+                    }
+                    state.maze.setSafe(p.pos[0], p.pos[1], p.name);
                 });
-            } else if(message.type == "refresh"){
+            } else if (message.type == "refresh") {
                 state.mode = "play";
                 console.log("REFRESH", message.maze);
-                state.maze.deserialise(message.maze, v=>v);
+                state.maze.deserialise(message.maze, v => v);
                 // state.maze.map((x,y,v)=>v == '%' ? "#": v)
-            } else if (message.type == "score"){
+            } else if (message.type == "score") {
                 console.log("SCORE", message)
+                if (state.mode != "scores") {
+                    state.soundQueue.push(WIN);
+                }
                 state.mode = "scores";
                 // state.scores = message.scores;
-            }else if (message.type == "join"){
+            } else if (message.type == "join") {
                 console.log("JOIN", message)
                 state.myId = message.id;
             }

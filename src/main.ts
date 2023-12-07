@@ -1,6 +1,7 @@
 import { MAZE_SIZE } from "./constants";
 import { registerKeyboard } from "./controls";
 import { render } from "./render";
+import { SOUND, Sfx } from "./sound";
 import { initState } from "./state";
 import { update } from "./update";
 
@@ -29,6 +30,11 @@ function tick(time: number) {
     // Update and render loop
     update(state);
     render(ctx, state);
+    if(state.soundQueue.length > 0){
+        const sound = state.soundQueue.pop() as Sfx;
+        state.soundQueue = state.soundQueue.filter(s=>s!=sound); // remove duplicates
+        SOUND.playSound(sound);
+    }
 
     // Do it again
     window.requestAnimationFrame(tick);

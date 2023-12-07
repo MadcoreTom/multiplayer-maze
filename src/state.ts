@@ -20,6 +20,7 @@ export function initState(size: number): State {
         players: [],
         mode: "play",
         overlayPos: 0.5,
-        myId:"?"
+        myId:"?",
+        soundQueue:[]
     }
 }

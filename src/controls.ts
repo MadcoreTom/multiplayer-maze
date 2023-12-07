@@ -1,3 +1,5 @@
+import { SOUND } from "./sound";
+
 export enum ControlKey {
     UP,
     DOWN,
@@ -23,6 +25,7 @@ function setKey(code: string, down: boolean) {
 	if (c != undefined) {
 		keys[c] = down;
 	}
+	SOUND.resume()
 }
 
 export function registerKeyboard() {
