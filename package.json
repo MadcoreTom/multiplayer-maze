@@ -6,7 +6,10 @@
   "scripts": {
     "start": "esbuild src/main.ts --bundle --servedir=./www/ --outdir=./www/js",
     "build": "esbuild src/main.ts --bundle --minify --outdir=./www/js",
-    "server": "npx ts-node ./src/server/server.ts"
+    "server": "npx ts-node --logError ./src/server/server.ts",
+    "build-server": "esbuild src/server/server.ts --bundle --platform=node --outdir=./dist --target=node19",
+    "docker-run": "docker run --rm -p 8080:80 maze",
+    "docker-build": "docker build -t maze ."
   },
   "author": "",
   "license": "ISC",

@@ -1,4 +1,4 @@
-import { COLLECT, MENU_MOVE, WIN } from "../sound";
+import { MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
 import { ClientMessage, Network, ServerMessage } from "./net";
 
@@ -11,7 +11,13 @@ export class ClientNetwork implements Network {
     public constructor() {
 
         const host = window.location.hostname;
-        this.socket = new WebSocket(`ws://${host}:${PORT}/socketserver`);
+        const port = window.location.port;
+        if (port == "8000") {
+            console.log("Local serving mode")
+            this.socket = new WebSocket(`ws://${host}:${PORT}/socketserver`);
+        } else {
+            this.socket = new WebSocket(`ws://${host}:${port}/ws/socketserver`);
+        }
         this.socket.onopen = (ev) => {
             console.log("Connected");
             this.isConnected = true;

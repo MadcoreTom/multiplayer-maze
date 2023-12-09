@@ -1,10 +1,10 @@
-import { Server, WebSocket, OPEN } from "ws";
+import {  WebSocket } from "ws";
 import { ClientMessage, OnJoinServerMessage } from "../net/net";
 import { Arr } from "../arr";
 import { MAZE_SIZE } from "../constants";
 import { gameLoop } from "./game";
 import { Client, ServerState } from "../state/common.state";
-
+const {Server, OPEN} = require('ws')
 const TICK_RATE = 30;
 
 export const state: ServerState = {
