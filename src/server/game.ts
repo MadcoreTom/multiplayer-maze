@@ -91,7 +91,7 @@ export function gameLoop(state: ServerState) {
             }
         });
 
-        if (loopCount++ % 10 == 0) {
+        if (loopCount++ % 100 == 0) {
             console.table(state.players.map(c => [c.id, c.pos, c.score]));
         }
 
