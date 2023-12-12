@@ -20,7 +20,8 @@ export type ScoreServerMessage = {
 export type RefreshServerMessage = {
     type: "refresh",
     timer: number,
-    maze: string
+    maze: string,
+    modifiers:string[]
 }
 
 export type OnJoinServerMessage = {

@@ -109,6 +109,13 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
         ctx.fillText("DISCONNECTED", 450, 400);
         ctx.font = "bold 48px sans-serif"
     }
+
+    // TMP
+    for(let i=0;i<state.modifiers.size;i++){
+        ctx.font = "bold 24px sans-serif"
+        ctx.fillStyle = "red";
+        ctx.fillText([...state.modifiers.keys()][i], 200, 50+50*i);
+    }
 }
 
 function renderScores(ctx: CanvasRenderingContext2D, state: State) {

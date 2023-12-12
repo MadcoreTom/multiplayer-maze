@@ -1,4 +1,5 @@
 import { Arr } from "../arr";
+import { GameModifierType, pickModifiers } from "../common/modifiers";
 import { maze } from "../maze";
 import { RefreshServerMessage, ScoreServerMessage, UpdateServerMessage } from "../net/net";
 import { XY } from "../state";
@@ -24,16 +25,44 @@ export function gameLoop(state: ServerState) {
             refresh = {
                 type: "refresh",
                 maze: state.maze? state.maze.serialise(b=>b) : "",
-                timer: timer
+                timer: timer,
+                modifiers: [...state.modifiers.keys()]
             }
             state.paintQueue = [];
         } else {
             state.roundEndTime = Date.now() + SCORE_TIME;
             const size = 14 + 4 * state.players.length;
-            state.maze= new Arr(size,size,"?");
-            state.maze.init((x,y)=> (x % 2 == 1 && y % 2 == 1) ? "#" : ".");
-            state.mazeGenerator = maze(state.maze, ".", "#", 15);
-            state.players.forEach(p=>p.score=0)
+            state.modifiers = new Set(pickModifiers(3).map(m => m.name));
+            if (state.modifiers.has("CAT_MAP")) {
+                state.maze = new Arr(17, 17, "?");
+                state.maze.deserialise(["17,17,",
+                    ".................",
+                    ".#...............",
+                    ".#...............",
+                    ".###.........###.",
+                    ".####.......####.",
+                    "..####.....####..",
+                    "...###########...",
+                    "...###########...",
+                    "...#..#####..#...",
+                    "...##..###..##...",
+                    "...###########...",
+                    "....####.####....",
+                    ".....##.#.##.....",
+                    "......#####......",
+                    ".................",
+                    ".................",
+                    ".................",
+                ].join(""), arg => arg);
+            } else if (state.modifiers.has("EMPTY_MAP")) {
+                state.maze = new Arr(size, size, "?");
+                state.maze.init((x, y) => "#");
+            } else {
+                state.maze = new Arr(size, size, "?");
+                state.maze.init((x, y) => (x % 2 == 1 && y % 2 == 1) ? "#" : ".");
+                state.mazeGenerator = maze(state.maze, ".", "#", 15);
+            }
+            state.players.forEach(p => p.score = 0)
         }
         console.log("MODE", state.mode)
     }
@@ -62,7 +91,8 @@ export function gameLoop(state: ServerState) {
             c.socket.send(JSON.stringify({
                 type: "refresh",
                 maze: state.maze? state.maze.serialise(b=>b) : "",
-                timer: timer
+                timer: timer,
+                modifiers:  [...state.modifiers.keys()]
             }));
             c.firstRefresh = false;
         })

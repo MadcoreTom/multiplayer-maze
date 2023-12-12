@@ -4,6 +4,7 @@ import { Arr } from "../arr";
 import { MAZE_SIZE } from "../constants";
 import { gameLoop } from "./game";
 import { Client, ServerState } from "../state/common.state";
+import { pickRandom } from "../common/util";
 const {Server, OPEN} = require('ws')
 const TICK_RATE = 30;
 
@@ -12,7 +13,8 @@ export const state: ServerState = {
     players: [],
     roundEndTime: 0,
     paintQueue: [],
-    maze: new Arr(MAZE_SIZE, MAZE_SIZE, " ")
+    maze: new Arr(MAZE_SIZE, MAZE_SIZE, " "),
+    modifiers: new Set()
 };
 
 const server = new Server({ port: 8001 });
@@ -67,14 +69,24 @@ function onMessage(socket: WebSocket, id: string, data: string) {
             me.dir[1] = message.update.dir[1];
             const x = Math.floor(me.pos[0]);
             const y = Math.floor(me.pos[1]);
-            state.paintQueue.push([x, y, id]);
             const oldVal = state.maze.getSafe(x, y, "?");
-            const oldPlayer = state.players.filter(p=>p.id == oldVal)[0];
-            if(oldPlayer){
-                oldPlayer.score--;
+            let repaint = oldVal != id;
+            if(state.modifiers.has("RANDOM_PAINT") || state.modifiers.has("NO_REPAINT")){
+                repaint = oldVal == "#";
             }
-            state.maze.setSafe(x, y, id);
-            me.score++;
+            if (repaint) {
+                const newVal = state.modifiers.has("RANDOM_PAINT") ? pickRandom(ALL_PLAYER_IDS) : id;
+                state.paintQueue.push([x, y, newVal]);
+                const oldPlayer = state.players.filter(p => p.id == oldVal)[0];
+                if (oldPlayer) {
+                    oldPlayer.score--;
+                }
+                const newPlayer = state.players.filter(p => p.id == newVal)[0];
+                state.maze.setSafe(x, y, newVal);
+                if (newPlayer) {
+                    newPlayer.score++;
+                }
+            }
         }
     } catch (e) {
         console.warn("Malformed message, could not parse JSON");
@@ -93,6 +105,7 @@ let playerId = 0;
 function nextPlayerId(): string {
     return (new Number(playerId++%16)).toString(16).toUpperCase();
 }
+export const ALL_PLAYER_IDS = "0123456789ABCDEF".split("");
 
 function loop() {
     gameLoop(state);

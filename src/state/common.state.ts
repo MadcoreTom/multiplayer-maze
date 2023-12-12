@@ -1,4 +1,5 @@
 import { Arr } from "../arr";
+import { GameModifier } from "../common/modifiers";
 import { Network } from "../net/net";
 import { Sfx } from "../sound";
 import { XY } from "../state";
@@ -33,7 +34,8 @@ export type RemotePlayer = CommonPlayer & {
 export type CommonState<T> = {
     mode: GameMode,
     players: T[],
-    maze: Arr<string>
+    maze: Arr<string>,
+    modifiers: Set<string>
 }
 
 export type ServerState = CommonState<Client> & {

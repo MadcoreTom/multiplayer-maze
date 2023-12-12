@@ -1,3 +1,4 @@
+import { MODIFIERS } from "../common/modifiers";
 import { MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
 import { ClientMessage, Network, ServerMessage } from "./net";
@@ -79,6 +80,9 @@ export class ClientNetwork implements Network {
             } else if (message.type == "refresh") {
                 state.mode = "play";
                 console.log("REFRESH", message.maze);
+                console.log("MODIFIERS", message.modifiers);
+                const modifiers = message.modifiers;
+                state.modifiers = new Set(modifiers);
                 state.maze.deserialise(message.maze, v => v);
                 // state.maze.map((x,y,v)=>v == '%' ? "#": v)
             } else if (message.type == "score") {

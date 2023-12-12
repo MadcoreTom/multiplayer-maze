@@ -21,6 +21,7 @@ export function initState(size: number): State {
         mode: "play",
         overlayPos: 0.5,
         myId:"?",
-        soundQueue:[]
+        soundQueue:[],
+        modifiers: new Set()
     }
 }
