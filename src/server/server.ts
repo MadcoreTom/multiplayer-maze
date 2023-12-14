@@ -14,7 +14,8 @@ export const state: ServerState = {
     roundEndTime: 0,
     paintQueue: [],
     maze: new Arr(MAZE_SIZE, MAZE_SIZE, " "),
-    modifiers: new Set()
+    modifiers: new Set(),
+    sendScores: true
 };
 
 const server = new Server({ port: 8001 });
@@ -100,12 +101,13 @@ function onClose(socket: WebSocket, id: string) {
     // broadcast
 }
 
-// TODO replace
-let playerId = 0;
-function nextPlayerId(): string {
-    return (new Number(playerId++%16)).toString(16).toUpperCase();
-}
 export const ALL_PLAYER_IDS = "0123456789ABCDEF".split("");
+
+
+function nextPlayerId(): string {
+    const availablePlayers = ALL_PLAYER_IDS.filter(id => state.players.filter(p => p.id == id).length == 0);
+    return pickRandom(availablePlayers);
+}
 
 function loop() {
     gameLoop(state);

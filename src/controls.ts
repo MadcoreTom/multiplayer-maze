@@ -5,6 +5,7 @@ export enum ControlKey {
     DOWN,
     LEFT,
     RIGHT,
+	DEBUG
 }
 
 const KEY_MAP: { [id: string]: ControlKey } = {
@@ -16,6 +17,7 @@ const KEY_MAP: { [id: string]: ControlKey } = {
 	"KeyA": ControlKey.LEFT,
 	"ArrowRight": ControlKey.RIGHT,
 	"KeyD": ControlKey.RIGHT,
+	"KeyP": ControlKey.DEBUG
 };
 
 const keys = {};

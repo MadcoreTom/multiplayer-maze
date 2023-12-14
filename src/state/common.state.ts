@@ -42,6 +42,7 @@ export type ServerState = CommonState<Client> & {
     roundEndTime: number,
     paintQueue: [number,number,string][],
     mazeGenerator?: Iterator<void, void>,
+    sendScores:boolean;
 }
 
 export type ClientState = CommonState<RemotePlayer> & {

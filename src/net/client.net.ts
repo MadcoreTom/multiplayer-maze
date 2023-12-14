@@ -1,4 +1,5 @@
 import { GameModifierNames } from "../common/modifiers";
+import { ControlKey, keyDown } from "../controls";
 import { MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
 import { ClientMessage, Network, ServerMessage } from "./net";
@@ -29,7 +30,9 @@ export class ClientNetwork implements Network {
         }
         this.socket.onmessage = (ev) => {
             const data = ev.data as string;
-            // console.log(">", data);
+            if(keyDown(ControlKey.DEBUG)){
+                console.log(">", data);
+            }
             try {
                 const message = JSON.parse(data);
                 this.messages.push(message);

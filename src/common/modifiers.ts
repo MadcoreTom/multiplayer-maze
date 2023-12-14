@@ -7,7 +7,7 @@ export type GameModifierNames = "CAT_MAP" | "EMPTY_MAP" | "HUGE_MAP" | "REGULAR_
 export const MODIFIERS: { [K in GameModifierNames]?: GameModifier } = {
     "CAT_MAP": { type: [GameModifierType.MAP], weight: 2 },
     "EMPTY_MAP": { type: [GameModifierType.MAP], weight: 1 },
-    "HUGE_MAP": { type: [GameModifierType.MAP], weight: 3 }, // not implemented
+    "HUGE_MAP": { type: [GameModifierType.MAP], weight: 3 },
     "REGULAR_MAP": { type: [GameModifierType.MAP], weight: 10 },
     // PAINT
     "NO_REPAINT": { type: [GameModifierType.PAINT], weight: 5 },
