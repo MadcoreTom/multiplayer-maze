@@ -1,5 +1,5 @@
 import { Arr } from "../arr";
-import { GameModifier } from "../common/modifiers";
+import { GameModifier, GameModifierNames } from "../common/modifiers";
 import { Network } from "../net/net";
 import { Sfx } from "../sound";
 import { XY } from "../state";
@@ -35,7 +35,7 @@ export type CommonState<T> = {
     mode: GameMode,
     players: T[],
     maze: Arr<string>,
-    modifiers: Set<string>
+    modifiers: Set<GameModifierNames>
 }
 
 export type ServerState = CommonState<Client> & {

@@ -1,5 +1,5 @@
 import { Arr } from "../arr";
-import { GameModifierType, pickModifiers } from "../common/modifiers";
+import { pickModifierName } from "../common/modifiers";
 import { maze } from "../maze";
 import { RefreshServerMessage, ScoreServerMessage, UpdateServerMessage } from "../net/net";
 import { XY } from "../state";
@@ -32,7 +32,7 @@ export function gameLoop(state: ServerState) {
         } else {
             state.roundEndTime = Date.now() + SCORE_TIME;
             const size = 14 + 4 * state.players.length;
-            state.modifiers = new Set(pickModifiers(3).map(m => m.name));
+            state.modifiers = new Set(pickModifierName(Math.floor(Math.random() * 2) + 1));
             if (state.modifiers.has("CAT_MAP")) {
                 state.maze = new Arr(17, 17, "?");
                 state.maze.deserialise(["17,17,",
@@ -122,7 +122,7 @@ export function gameLoop(state: ServerState) {
         });
 
         if (loopCount++ % 100 == 0) {
-            console.table(state.players.map(c => [c.id, c.pos, c.score]));
+            console.log("PLAYERS", state.players.length);
         }
 
         state.paintQueue = [];
