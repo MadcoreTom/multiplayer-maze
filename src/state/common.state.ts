@@ -20,7 +20,7 @@ export type Client = CommonPlayer & {
     lastTime: number,
     socket: WebSocket,
     firstRefresh:boolean,
-    lastMessage: number
+    lastMessage: number,
 };
 
 export type RemotePlayer = CommonPlayer & {
@@ -45,6 +45,17 @@ export type ServerState = CommonState<Client> & {
     sendScores:boolean;
 }
 
+export type Note = {
+    pos:XY,
+    vel:XY,
+    target:XY,
+    text:string,
+    anim: {
+        time:number,
+        target:XY
+    }[]
+}
+
 export type ClientState = CommonState<RemotePlayer> & {
     offset: XY,
     pos:XY,
@@ -54,5 +65,6 @@ export type ClientState = CommonState<RemotePlayer> & {
     server: Network,
     myId:string,
     overlayPos: number,
-    soundQueue: Sfx[]
+    soundQueue: Sfx[],
+    notes: Note[]
 }

@@ -81,9 +81,33 @@ export class ClientNetwork implements Network {
                     state.maze.setSafe(p.pos[0], p.pos[1], p.name);
                 });
             } else if (message.type == "refresh") {
+                if(state.mode != "play"){
+                    // should always be true
+                    state.notes = [...message.modifiers.values()].map(
+                        (m,i)=> {
+                            return {
+                                pos: [Math.random() * 1000, 1100],
+                                target: [500, 900 - 40*i],
+                                text: m,
+                                vel: [0,0],
+                                anim: [
+                                    {
+                                        time: state.time + 500,
+                                        target: [500, 900 - 40*i]
+                                    },
+                                    {
+                                        time: state.time + 5000,
+                                        target: [Math.random() * 1000, 1100]
+                                    }
+                                ]
+                            }
+                        }
+                    )
+
+                }
                 state.mode = "play";
                 console.log("REFRESH", message.maze);
-                console.log("MODIFIERS", message.modifiers);
+                console.log("MODIFIERS", message.modifiers); 
                 const modifiers = message.modifiers;
                 state.modifiers = new Set(modifiers as GameModifierNames[]);
                 state.maze.deserialise(message.maze, v => v);

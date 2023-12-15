@@ -111,11 +111,28 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     }
 
     // TMP
-    for(let i=0;i<state.modifiers.size;i++){
-        ctx.font = "bold 24px sans-serif"
-        ctx.fillStyle = "red";
-        ctx.fillText([...state.modifiers.keys()][i], 200, 50+50*i);
-    }
+    ctx.textAlign = "center";
+    ctx.font = "bold 18px sans-serif"
+    // const modifierColour = [colours.A, colours.B, colours.C][Math.floor((state.time / 500)%3)]
+    // for(let i=0;i<state.modifiers.size;i++){
+    //     const y = 1000 - 50 - 40*i;
+    //     ctx.fillStyle = "rgba(0,0,0,0.8)";
+    //     ctx.beginPath();
+    //     ctx.roundRect(500-100, y - 20, 200, 30, 5);
+    //     ctx.fill();
+    //     ctx.fillStyle = modifierColour;
+    //     ctx.fillText([...state.modifiers.keys()][i], 500, y);
+    // }
+
+    state.notes.forEach(n=>{
+        const [x,y] = n.pos;
+        ctx.fillStyle = "rgba(0,0,0,0.8)";
+        ctx.beginPath();
+        ctx.roundRect(x-100, y - 20, 200, 30, 5);
+        ctx.fill();
+        ctx.fillStyle = "limegreen";
+        ctx.fillText(n.text, x, y);
+    })
 }
 
 function renderScores(ctx: CanvasRenderingContext2D, state: State) {
