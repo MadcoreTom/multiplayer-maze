@@ -2,6 +2,7 @@ import { GameModifierNames } from "../common/modifiers";
 import { ControlKey, keyDown } from "../controls";
 import { MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
+import { NoteElements, TimerElement } from "../state/hud.elements";
 import { ClientMessage, Network, ServerMessage } from "./net";
 
 const PORT = 8001;
@@ -83,31 +84,35 @@ export class ClientNetwork implements Network {
             } else if (message.type == "refresh") {
                 if(state.mode != "play"){
                     // should always be true
-                    state.notes = [...message.modifiers.values()].map(
-                        (m,i)=> {
-                            return {
-                                pos: [Math.random() * 1000, 1100],
-                                target: [500, 900 - 40*i],
-                                text: m,
-                                vel: [0,0],
-                                anim: [
-                                    {
-                                        time: state.time + 500,
-                                        target: [500, 900 - 40*i]
-                                    },
-                                    {
-                                        time: state.time + 5000,
-                                        target: [Math.random() * 1000, 1100]
-                                    }
-                                ]
+
+                    state.hudElements = [];
+
+                    message.modifiers.forEach((m, i) => {
+                        const note = new NoteElements(m);
+                        note.pos = [Math.random() * 1000, 1100];
+                        note.target = [500, 900 - 40 * i];
+                        note.anim = [
+                            {
+                                time: state.time + 500,
+                                target: [500, 900 - 40 * i]
+                            },
+                            {
+                                time: state.time + 5000,
+                                target: [Math.random() * 1000, 1100]
                             }
-                        }
-                    )
+                        ];
+                        state.hudElements.push(note);
+                    });
+                    
+                    const timer = new TimerElement();
+                    timer.pos = [-50,-50];
+                    timer.target=[50,50];
+                    state.hudElements.push(timer)
 
                 }
                 state.mode = "play";
                 console.log("REFRESH", message.maze);
-                console.log("MODIFIERS", message.modifiers); 
+                console.log("MODIFIERS", message.modifiers);
                 const modifiers = message.modifiers;
                 state.modifiers = new Set(modifiers as GameModifierNames[]);
                 state.maze.deserialise(message.maze, v => v);

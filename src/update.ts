@@ -35,22 +35,7 @@ export function update(state: State) {
     } else {
         state.overlayPos = Math.min(1,state.overlayPos + state.delta * 0.003)
     }
-
-    state.notes.forEach(n => {
-        const delta = [n.target[0] - n.pos[0], n.target[1] - n.pos[1]] as XY;
-        delta[0] *= state.delta / 1000;
-        delta[1] *= state.delta / 1000;
-        n.vel[0] += delta[0];
-        n.vel[1] += delta[1];
-        n.pos[0] += n.vel[0]*  state.delta / 50;
-        n.pos[1] += n.vel[1]*  state.delta / 50;
-        n.vel[0] *= 0.95;
-        n.vel[1] *= 0.95;
-        if (n.anim.length > 0 && state.time >= n.anim[0].time) {
-            n.target = n.anim[0].target;
-            n.anim.shift();
-        }
-    });
+    state.hudElements.forEach(e => e.update(state));
 }
 
 function move(state: State) : XY | undefined{

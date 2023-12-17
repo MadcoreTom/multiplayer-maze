@@ -29,23 +29,6 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
 
 
 
-    if (state.mode == "play") {
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(50, 50, 45, 0, 2 * Math.PI);
-        ctx.lineTo(50, 50);
-        ctx.fill();
-        ctx.fillStyle = getColour(state.myId);
-        ctx.beginPath();
-        ctx.arc(50, 50, 40, - Math.PI / 2, 2 * Math.PI * state.gameTimeRemaining - Math.PI / 2, true);
-        ctx.lineTo(50, 50);
-        ctx.fill();
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.arc(50, 50, 40, - Math.PI / 2, 2 * Math.PI * state.gameTimeRemaining - Math.PI / 2, false);
-        ctx.lineTo(50, 50);
-        ctx.fill();
-    }
 
     // Player icons
     state.players.forEach((r, i) => {
@@ -110,9 +93,9 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
         ctx.font = "bold 48px sans-serif"
     }
 
-    // TMP
-    ctx.textAlign = "center";
-    ctx.font = "bold 18px sans-serif"
+    // // TMP
+    // ctx.textAlign = "center";
+    // ctx.font = "bold 18px sans-serif"
     // const modifierColour = [colours.A, colours.B, colours.C][Math.floor((state.time / 500)%3)]
     // for(let i=0;i<state.modifiers.size;i++){
     //     const y = 1000 - 50 - 40*i;
@@ -124,15 +107,7 @@ export function render(ctx: CanvasRenderingContext2D, state: State) {
     //     ctx.fillText([...state.modifiers.keys()][i], 500, y);
     // }
 
-    state.notes.forEach(n=>{
-        const [x,y] = n.pos;
-        ctx.fillStyle = "rgba(0,0,0,0.8)";
-        ctx.beginPath();
-        ctx.roundRect(x-100, y - 20, 200, 30, 5);
-        ctx.fill();
-        ctx.fillStyle = "limegreen";
-        ctx.fillText(n.text, x, y);
-    })
+    renderHudElements(state, ctx);
 }
 
 function renderScores(ctx: CanvasRenderingContext2D, state: State) {
@@ -176,6 +151,10 @@ function renderScores(ctx: CanvasRenderingContext2D, state: State) {
     });
 }
 
+function renderHudElements(state: State, ctx: CanvasRenderingContext2D) {
+    state.hudElements.forEach(e => e.render(state, ctx));
+}
+
 const NTH = ["1st", "2nd", "3rd"]
 
 // TODO use https://lospec.com/palette-list/r-place-2022-day2
@@ -201,7 +180,7 @@ const colours: { [id: string]: string } = {
 };
 
 
-function getColour(key: string): string {
+export function getColour(key: string): string {
     let a = colours[key];
     if (!a) {
         a = `hsl(${Math.floor(Math.random() * 360)}, 50%, 80%)`;

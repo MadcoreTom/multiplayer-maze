@@ -23,6 +23,6 @@ export function initState(size: number): State {
         myId:"?",
         soundQueue:[],
         modifiers: new Set(),
-        notes: []
+        hudElements: []
     }
 }

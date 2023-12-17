@@ -4,6 +4,7 @@ import { Network } from "../net/net";
 import { Sfx } from "../sound";
 import { XY } from "../state";
 import {  WebSocket } from "ws";
+import { HudElement } from "./hud.elements";
 
 export type GameMode = "play" | "scores";
 
@@ -45,17 +46,6 @@ export type ServerState = CommonState<Client> & {
     sendScores:boolean;
 }
 
-export type Note = {
-    pos:XY,
-    vel:XY,
-    target:XY,
-    text:string,
-    anim: {
-        time:number,
-        target:XY
-    }[]
-}
-
 export type ClientState = CommonState<RemotePlayer> & {
     offset: XY,
     pos:XY,
@@ -66,5 +56,5 @@ export type ClientState = CommonState<RemotePlayer> & {
     myId:string,
     overlayPos: number,
     soundQueue: Sfx[],
-    notes: Note[]
+    hudElements: HudElement[]
 }
