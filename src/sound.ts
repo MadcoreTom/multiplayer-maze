@@ -40,8 +40,8 @@ class Sound {
     whiteNoise.start(0);
 
     this.noiseGain = audioCtx.createGain();
-    this.noiseGain.connect(audioCtx.destination);
     this.noiseGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    this.noiseGain.connect(audioCtx.destination);
     whiteNoise.connect(this.noiseGain);
 
 

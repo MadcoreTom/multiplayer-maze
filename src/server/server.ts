@@ -26,6 +26,10 @@ server.on('connection', socket => {
 
     if (socket.readyState === OPEN) {
         onConnect(socket, id);
+        if(state.players.length == 1){
+            state.mode = "play";
+            state.roundEndTime = -1;
+        }
     }
 
     // Handle messages from this client

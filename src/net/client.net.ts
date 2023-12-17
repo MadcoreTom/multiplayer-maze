@@ -1,8 +1,9 @@
 import { GameModifierNames } from "../common/modifiers";
 import { ControlKey, keyDown } from "../controls";
+import { NoteElement } from "../hud/note.element";
+import { TimerElement } from "../hud/timer.element";
 import { MENU_MOVE, WIN } from "../sound";
 import { State, XY } from "../state";
-import { NoteElements, TimerElement } from "../state/hud.elements";
 import { ClientMessage, Network, ServerMessage } from "./net";
 
 const PORT = 8001;
@@ -88,7 +89,7 @@ export class ClientNetwork implements Network {
                     state.hudElements = [];
 
                     message.modifiers.forEach((m, i) => {
-                        const note = new NoteElements(m);
+                        const note = new NoteElement(m);
                         note.pos = [Math.random() * 1000, 1100];
                         note.target = [500, 900 - 40 * i];
                         note.anim = [

@@ -4,7 +4,7 @@ import { Network } from "../net/net";
 import { Sfx } from "../sound";
 import { XY } from "../state";
 import {  WebSocket } from "ws";
-import { HudElement } from "./hud.elements";
+import { HudElement } from "../hud/hud.elements";
 
 export type GameMode = "play" | "scores";
 

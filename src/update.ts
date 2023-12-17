@@ -7,11 +7,13 @@ const MOVE_SPEED = 0.011;
 
 export function update(state: State) {
 
-    const dir = move(state);
-    state.offset[0] = state.pos[0] - MAZE_SIZE / 2;
-    state.offset[1] = state.pos[1] - MAZE_SIZE / 2;
-    if(dir && state.mode == "play"){
-        state.server.sendUpdate(state.pos, dir);
+    if(state.mode == "play"){
+        const dir = move(state);
+        state.offset[0] = state.pos[0] - MAZE_SIZE / 2;
+        state.offset[1] = state.pos[1] - MAZE_SIZE / 2;
+        if (dir) {
+            state.server.sendUpdate(state.pos, dir);
+        }
     }
 
     state.server.processMessages(state);
